@@ -94,6 +94,37 @@ public final class CageRoost {
     public static void registerInteractions() {
         // Vanilla skips the block interaction when a sneaking player holds an item in either hand.
         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+            if (!player.isSpectator() && !player.isSecondaryUseActive() && CageBirdCargo.isOccupied(player.getItemInHand(hand))) {
+                var pos = hit.getBlockPos();
+                var state = level.getBlockState(pos);
+                boolean stand = state.is(dev.parapet.ParapetFurniture.PARROT_PLAY_STAND) || state.is(dev.parapet.ParapetFurniture.LARGE_PARROT_PLAY_STAND);
+                boolean small = state.getBlock() instanceof ParrotCageBlock cage && cage.size() == ParrotCageBlock.Size.STANDARD;
+                if (stand || small) {
+                    if (level instanceof ServerLevel server) {
+                        boolean deposited = false;
+                        if (level.mayInteract(player, pos)) {
+                            for (BlockPos candidate : BlockPos.withinManhattan(pos, stand ? 4 : 0)) {
+                                if (candidate.distSqr(pos) > 16 || !server.hasChunkAt(candidate)) continue;
+                                var cell = server.getBlockState(candidate);
+                                if (!(cell.getBlock() instanceof ParrotCageBlock dest) || !cell.getValue(ParrotCageBlock.OPEN)) continue;
+                                var root = dest.anchor(candidate, cell);
+                                if (!candidate.equals(root) || !level.mayInteract(player, root)
+                                    || !dest.loaded(server, root, cell.getValue(ParrotCageBlock.FACING))
+                                    || !dest.complete(server, root, cell.getValue(ParrotCageBlock.FACING))) continue;
+                                var held = player.getItemInHand(hand);
+                                var empty = CageBirdCargo.emptyCage(held);
+                                if (CageBirdCargo.restore(server, held, player, dest, root, cell.getValue(ParrotCageBlock.FACING))) {
+                                    player.setItemInHand(hand, empty);
+                                    deposited = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!deposited) message(player, "need_open_space");
+                    }
+                    return InteractionResult.SUCCESS;
+                }
+            }
             if (hand != InteractionHand.MAIN_HAND || player.isSpectator() || !player.isSecondaryUseActive()
                 || player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()) return InteractionResult.PASS;
             BlockPos pos = hit.getBlockPos();
@@ -109,7 +140,7 @@ public final class CageRoost {
         return residents(level, anchor).stream().findFirst().orElse(null);
     }
 
-    private static List<PetParrotEntity> residents(ServerLevel level, BlockPos anchor) {
+    static List<PetParrotEntity> residents(ServerLevel level, BlockPos anchor) {
         return level.getEntitiesOfClass(PetParrotEntity.class, new AABB(anchor).inflate(4),
             bird -> bird.isAlive() && bird.getCageRoost().at(level, anchor));
     }

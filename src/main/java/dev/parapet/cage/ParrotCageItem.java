@@ -20,6 +20,13 @@ public final class ParrotCageItem extends BlockItem {
     }
 
     @Override
+    public net.minecraft.world.InteractionResult place(BlockPlaceContext context) {
+        // Wait for authoritative multipart placement before consuming a cage or predicting its blocks.
+        if (context.getLevel().isClientSide()) return net.minecraft.world.InteractionResult.SUCCESS;
+        return super.place(context);
+    }
+
+    @Override
     protected boolean placeBlock(BlockPlaceContext context, BlockState state) {
         return ((ParrotCageBlock) getBlock()).placeCage(context, state);
     }

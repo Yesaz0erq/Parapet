@@ -239,6 +239,10 @@ public final class CageBirdCargo {
         CompoundTag entry = checked.get();
         var flock = new ArrayList<PetParrotEntity>();
         int space = CageRoost.units(cage.size().maxBirdSize);
+        for (var resident : CageRoost.residents(level, root)) {
+            if (!resident.isOwnedBy(owner)) return false;
+            space -= CageRoost.units(ParrotEcology.forBird(resident).size());
+        }
         for (var record : birds(entry)) {
             var type = record.getString("Type").map(Identifier::tryParse).flatMap(BuiltInRegistries.ENTITY_TYPE::getOptional);
             if (type.isEmpty() || !(type.get().create(level, EntitySpawnReason.LOAD) instanceof PetParrotEntity bird)) return false;

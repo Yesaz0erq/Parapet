@@ -36,7 +36,8 @@ public final class ParrotFieldGuideScreen extends Screen {
     private boolean openingSkipped;
     private final int collectedCount;
     private float scale, originX, originY;
-    private int page, target, indexFocus;
+    private int page = -1, target = -1, indexFocus;
+    private float textOpacity = 1F;
     private boolean indexOpen, notesOpen, missingOnly;
     private long turnStarted;
     private double pointerX, pointerY;
@@ -97,6 +98,7 @@ public final class ParrotFieldGuideScreen extends Screen {
             leftPage(gui, page);
             rightPage(gui, page);
         }
+        textOpacity = 1F;
         gui.nextStratum();
         link(gui, Component.literal("×"), 299, 4, 316, 19, true);
         if (inside(299, 4, 316, 19)) {
@@ -112,8 +114,15 @@ public final class ParrotFieldGuideScreen extends Screen {
     }
 
     private void leftPage(GuiGraphicsExtractor gui, int number) {
+        pageOpacity(number);
         if (indexOpen) {
             indexPage(gui);
+            return;
+        }
+        if (number < 0) {
+            fit(gui, label("controls"), 20, 22, 124, GREEN);
+            wrapped(gui, label("controls_bird"), 20, 48, 124, 9, INK);
+            link(gui, label("contents"), 40, 162, 119, 176, true);
             return;
         }
         var species = SPECIES[number];
@@ -130,7 +139,7 @@ public final class ParrotFieldGuideScreen extends Screen {
             habitatPage(gui, species);
         }
         link(gui, label("contents"), 40, 162, 119, 176, true);
-        link(gui, Component.literal("<"), 19, 161, 37, 177, number > 0);
+        link(gui, Component.literal("<"), 19, 161, 37, 177, number >= 0);
     }
 
     private static Component observation(ParrotEcology species) {
@@ -177,6 +186,13 @@ public final class ParrotFieldGuideScreen extends Screen {
     }
 
     private void rightPage(GuiGraphicsExtractor gui, int number) {
+        pageOpacity(number);
+        if (number < 0) {
+            fit(gui, label("housing"), 178, 22, 120, GREEN);
+            wrapped(gui, label("controls_cage"), 178, 48, 120, 11, INK);
+            link(gui, Component.literal(">"), 284, 161, 302, 177, true);
+            return;
+        }
         var species = SPECIES[number];
         boolean known = recorded(species);
         int mark = known ? GREEN : RULE;
@@ -295,15 +311,26 @@ public final class ParrotFieldGuideScreen extends Screen {
         return SPINE + (int) Math.round(direction * (u * cosine + curve));
     }
 
+    private void pageOpacity(int number) {
+        if (turnStarted == 0) { textOpacity = 1F; return; }
+        float t = Mth.clamp((System.nanoTime() - turnStarted) / (float) TURN_NANOS, 0F, 1F);
+        t = t * t * (3F - 2F * t);
+        textOpacity = number == page ? 1F - t : t;
+    }
+
+    private int ink(int color) {
+        return (Math.round((color >>> 24) * textOpacity) << 24) | (color & 0xffffff);
+    }
+
     private void wrapped(GuiGraphicsExtractor gui, Component message, int x, int y, int width, int rows, int color) {
         var lines = font.split(message, width);
         for (int i = 0; i < Math.min(rows, lines.size()); i++) {
             if (i == rows - 1 && lines.size() > rows) {
                 StringBuilder last = new StringBuilder();
                 lines.get(i).accept((index, style, codepoint) -> { last.appendCodePoint(codepoint); return true; });
-                gui.text(font, font.plainSubstrByWidth(last.toString(), width - font.width("…")) + "…", x, y + i * 10, color, false);
+                gui.text(font, font.plainSubstrByWidth(last.toString(), width - font.width("…")) + "…", x, y + i * 10, ink(color), false);
             } else {
-                gui.text(font, lines.get(i), x, y + i * 10, color, false);
+                gui.text(font, lines.get(i), x, y + i * 10, ink(color), false);
             }
         }
     }
@@ -317,7 +344,7 @@ public final class ParrotFieldGuideScreen extends Screen {
         }
         gui.pose().pushMatrix();
         gui.pose().translate((float) x, (float) y).scale(factor);
-        gui.text(font, message, 0, 0, color, false);
+        gui.text(font, message, 0, 0, ink(color), false);
         gui.pose().popMatrix();
     }
 
@@ -339,7 +366,7 @@ public final class ParrotFieldGuideScreen extends Screen {
 
     private void turn(int to) {
         indexOpen = false;
-        to = Mth.clamp(to, 0, SPECIES.length - 1);
+        to = Mth.clamp(to, -1, SPECIES.length - 1);
         if (to == page || turnStarted != 0) return;
         target = to;
         turnStarted = System.nanoTime();
@@ -348,7 +375,7 @@ public final class ParrotFieldGuideScreen extends Screen {
 
     private void index() {
         indexOpen = !indexOpen;
-        if (indexOpen) focusOn(SPECIES[page]);
+        if (indexOpen) focusOn(SPECIES[Math.max(0, page)]);
     }
 
     private void focusOn(ParrotEcology entry) {
@@ -359,7 +386,7 @@ public final class ParrotFieldGuideScreen extends Screen {
 
     private void toggleIndexFilter() {
         var entries = indexEntries();
-        var selected = entries.isEmpty() ? SPECIES[page] : entries.get(indexFocus);
+        var selected = entries.isEmpty() ? SPECIES[Math.max(0, page)] : entries.get(indexFocus);
         missingOnly = !missingOnly;
         focusOn(selected);
     }
@@ -375,7 +402,7 @@ public final class ParrotFieldGuideScreen extends Screen {
     }
 
     private void cycle(int direction) {
-        if (minecraft.level != null && recorded(SPECIES[page])) specimen(SPECIES[page]).cycle(direction);
+        if (page >= 0 && minecraft.level != null && recorded(SPECIES[page])) specimen(SPECIES[Math.max(0, page)]).cycle(direction);
     }
 
     @Override
@@ -445,8 +472,9 @@ public final class ParrotFieldGuideScreen extends Screen {
 
     @Override
     public Component getNarrationMessage() {
+        if (page < 0 && !indexOpen) return label("controls_bird").copy().append(" ").append(label("controls_cage"));
         if (indexOpen && indexEntries().isEmpty()) return label("all_recorded");
-        var entry = indexOpen ? indexEntries().get(indexFocus) : SPECIES[page];
+        var entry = indexOpen ? indexEntries().get(indexFocus) : SPECIES[Math.max(0, page)];
         if (notesOpen && !indexOpen) return label("notes_narration", name(entry), observation(entry), label("note_roost"));
         if (indexOpen) {
             return label("index_narration", label(missingOnly ? "filter_missing" : "filter_all"), name(entry), indexFocus + 1, indexEntries().size());

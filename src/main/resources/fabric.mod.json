@@ -21,5 +21,11 @@
     "minecraft": "26.3",
     "java": ">=25",
     "fabric-api": ">=0.167.0"
-  }
+  },
+  "mixins": [
+    {
+      "config": "parapet.client.mixins.json",
+      "environment": "client"
+    }
+  ]
 }

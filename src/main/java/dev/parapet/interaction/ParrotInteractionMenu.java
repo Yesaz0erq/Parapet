@@ -33,6 +33,12 @@ public final class ParrotInteractionMenu extends AbstractContainerMenu {
         @Override public Type<Profile> type() { return TYPE; }
     }
 
+    public record Inspect(int birdId) implements CustomPacketPayload {
+        public static final Type<Inspect> TYPE = new Type<>(Parapet.id("inspect_bird"));
+        public static final StreamCodec<ByteBuf, Inspect> CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, Inspect::birdId, Inspect::new);
+        @Override public Type<Inspect> type() { return TYPE; }
+    }
+
     public record Choose(int menuId, long session, int action) implements CustomPacketPayload {
         public static final Type<Choose> TYPE = new Type<>(Parapet.id("interaction_choose"));
         public static final StreamCodec<ByteBuf, Choose> CODEC = StreamCodec.composite(
@@ -62,6 +68,11 @@ public final class ParrotInteractionMenu extends AbstractContainerMenu {
 
     public static void register() {
         Registry.register(BuiltInRegistries.MENU, Parapet.id("parrot_interaction"), TYPE);
+        PayloadTypeRegistry.serverboundPlay().register(Inspect.TYPE, Inspect.CODEC);
+        ServerPlayNetworking.registerGlobalReceiver(Inspect.TYPE, (request, context) -> {
+            var owner = context.player();
+            if (owner.containerMenu == owner.inventoryMenu && owner.level().getEntity(request.birdId()) instanceof PetParrotEntity bird) open(owner, bird);
+        });
         PayloadTypeRegistry.clientboundPlay().register(Profile.TYPE, Profile.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(Choose.TYPE, Choose.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(Choose.TYPE, (request, context) -> {

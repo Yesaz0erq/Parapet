@@ -452,5 +452,11 @@
   "message.parapet.cage.toy_removed": "已取下%s",
   "message.parapet.cage.toy_none": "笼中没有可取下的玩具",
   "message.parapet.cage.toy_owner_only": "只有笼中鹦鹉的主人可以拆装玩具",
-  "tooltip.parapet.cage.flock": "笼内共有 %s 只鹦鹉"
+  "tooltip.parapet.cage.flock": "笼内共有 %s 只鹦鹉",
+  "gui.parapet.guide.controls": "操作入门",
+  "gui.parapet.guide.controls_bird": "对准自己的鹦鹉按鼠标中键，打开互动面板。手持合适的空笼右击鹦鹉，可以将它装笼。",
+  "gui.parapet.guide.housing": "安置鹦鹉",
+  "gui.parapet.guide.controls_cage": "手持携鸟笼，右击打开的小笼即可入住。右击爬架可送入附近打开的笼子。双手留空，潜行右击笼子可领出一只鸟。",
+  "message.parapet.cage.space_occupied": "放置范围内有实体，请先腾出空间。",
+  "message.parapet.cage.need_open_space": "请打开有足够空位的鸟笼，爬架与笼座相距最多四格。"
 }

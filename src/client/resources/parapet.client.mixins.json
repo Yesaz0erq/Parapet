@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "dev.parapet.client.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ParrotMouseMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

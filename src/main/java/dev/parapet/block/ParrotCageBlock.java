@@ -219,7 +219,7 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
         return anchor.relative(facing.getClockWise(), part.x).relative(facing.getOpposite(), part.z).above(part.y);
     }
 
-    private BlockPos anchor(BlockPos pos, BlockState state) {
+    public BlockPos anchor(BlockPos pos, BlockState state) {
         Part part = state.getValue(PART);
         Direction facing = state.getValue(FACING);
         return pos.relative(facing.getCounterClockWise(), part.x).relative(facing, part.z).below(part.y);
@@ -259,7 +259,12 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
 
         List<BlockPos> cells = size.parts.stream().map(p -> cell(context.getClickedPos(), facing, p)).toList();
         if (!loaded(level, context.getClickedPos(), facing)) return false;
-        BlockPos far = cells.getLast();
+        BlockPos far = cell(context.getClickedPos(), facing, size.parts.getLast());
+        AABB volume = AABB.encapsulatingFullBlocks(BlockPos.min(context.getClickedPos(), far), BlockPos.max(context.getClickedPos(), far));
+        if (!level.getEntities((net.minecraft.world.entity.Entity) null, volume.deflate(1e-6), entity -> entity.isAlive() && !entity.isSpectator()).isEmpty()) {
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.parapet.cage.space_occupied"));
+            return false;
+        }
         if (!level.isUnobstructed(null, Shapes.create(AABB.encapsulatingFullBlocks(context.getClickedPos(), far)))) return false;
         BlockState[] originals = new BlockState[cells.size()];
         for (int i = 0; i < cells.size(); i++) {
