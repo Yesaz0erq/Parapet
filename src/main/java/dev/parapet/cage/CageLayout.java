@@ -10,6 +10,11 @@ public final class CageLayout {
     public static final double FLOOR = 2.02 / 16.0;
     private CageLayout() {}
 
+    public static double seatOffset(Size cage, int seat) {
+        double fraction = switch (seat) { case 1 -> -.37; case 2 -> .17; case 3 -> -.17; default -> 0; };
+        return fraction * cage.width;
+    }
+
     public static Vec3 perch(Size size) {
         return new Vec3(.64 * size.width, size.perchHeight, .5 * size.depth);
     }

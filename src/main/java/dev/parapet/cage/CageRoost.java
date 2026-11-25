@@ -39,6 +39,10 @@ public final class CageRoost {
     private BlockPos anchor;
     private String dimension = "";
     private String sizeName = "";
+    private int seat;
+    private ParrotCageBlock.Size cachedCage;
+    private int cachedLength;
+    private double cachedNatural, cachedFactor;
     private int bellCooldown;
     private int provisionSeconds;
     private BlockPos breakingPart;
@@ -53,6 +57,7 @@ public final class CageRoost {
             output.store("CagePerch", BlockPos.CODEC, anchor);
             output.putString("CageDimension", dimension);
             output.putString("CageSize", sizeName);
+            output.putInt("CageSeat", seat);
             if (provisionSeconds > 0) output.putInt("CageProvisionSeconds", provisionSeconds);
         }
     }
@@ -61,11 +66,13 @@ public final class CageRoost {
         anchor = input.read("CagePerch", BlockPos.CODEC).orElse(null);
         dimension = input.getStringOr("CageDimension", "");
         sizeName = input.getStringOr("CageSize", "");
+        seat = Math.clamp(input.getIntOr("CageSeat", 0), 0, 3);
         provisionSeconds = Math.clamp(input.getIntOr("CageProvisionSeconds", 0), 0, 59);
         bellCooldown = 240 + bird.getRandom().nextInt(360);
         if (anchor != null && dimension.equals(bird.level().dimension().identifier().toString())) {
             for (ParrotCageBlock.Size size : ParrotCageBlock.Size.values()) {
                 if (size.name().equals(sizeName)) {
+                    bird.setCageSeat(seat);
                     setPerchedScale(bird, size);
                     bird.setInSittingPose(true);
                     return;
@@ -99,20 +106,35 @@ public final class CageRoost {
     }
 
     public static PetParrotEntity occupantAt(ServerLevel level, BlockPos anchor) {
-        var occupants = level.getEntitiesOfClass(PetParrotEntity.class, new AABB(anchor).inflate(4),
+        return residents(level, anchor).stream().findFirst().orElse(null);
+    }
+
+    private static List<PetParrotEntity> residents(ServerLevel level, BlockPos anchor) {
+        return level.getEntitiesOfClass(PetParrotEntity.class, new AABB(anchor).inflate(4),
             bird -> bird.isAlive() && bird.getCageRoost().at(level, anchor));
-        return occupants.isEmpty() ? null : occupants.getFirst();
+    }
+
+    static int units(ParrotEcology.Size size) {
+        return switch (size) { case SMALL -> 1; case MEDIUM -> 2; case LARGE -> 4; };
+    }
+
+    private Vec3 seatPosition(ParrotCageBlock cage, BlockPos root, Direction facing) {
+        // Space the birds along the main wooden perch, keeping seat zero at the feeding branch.
+        return cage.perch(root, facing).relative(facing.getClockWise(), CageLayout.seatOffset(cage.size(), seat));
     }
 
     public static void transfer(ServerLevel level, ParrotCageBlock cage, BlockPos anchor, Direction facing, Player player) {
         Vec3 perch = cage.perch(anchor, facing);
         if (!level.areEntitiesLoaded(ChunkPos.pack(BlockPos.containing(perch)))) return;
-        PetParrotEntity resident = occupantAt(level, anchor);
+        var flock = residents(level, anchor);
+        PetParrotEntity resident = flock.isEmpty() ? null : flock.getLast();
         if (resident != null) {
             if (!resident.isOwnedBy(player)) {
                 message(player, "occupied");
                 return;
             }
+        }
+        if (resident != null && player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()) {
             Vec3 exit = findExit(level, resident, cage, anchor, facing);
             if (exit == null) {
                 message(player, "exit_blocked");
@@ -129,8 +151,9 @@ public final class CageRoost {
                 && bird.distanceToSqr(doorway) <= 25 && bird.hasLineOfSight(player)
                 && clearPath(level, bird, doorway, bird.getEyePosition()));
         nearby.sort(Comparator.comparingDouble(bird -> bird.distanceToSqr(doorway)));
+        int used = flock.stream().mapToInt(b -> units(ParrotEcology.forBird(b).size())).sum();
         for (PetParrotEntity bird : nearby) {
-            if (ParrotEcology.forBird(bird).size().compareTo(cage.size().maxBirdSize) > 0) continue;
+            if (used + units(ParrotEcology.forBird(bird).size()) > units(cage.size().maxBirdSize)) continue;
             bird.getCageRoost().settle(level, bird, cage, anchor, facing);
             message(player, "entered", bird.getDisplayName());
             return;
@@ -139,14 +162,19 @@ public final class CageRoost {
     }
 
     void settle(ServerLevel level, PetParrotEntity bird, ParrotCageBlock cage, BlockPos root, Direction facing) {
+        boolean[] taken = new boolean[4];
+        for (var other : residents(level, root)) taken[other.getCageRoost().seat] = true;
+        seat = 0;
+        while (seat < 3 && taken[seat]) seat++;
         anchor = root.immutable();
         dimension = level.dimension().identifier().toString();
         sizeName = cage.size().name();
-        provisionSeconds = 0;
+        bird.setCageSeat(seat);
+        provisionSeconds = seat * 7;
         bellCooldown = 240 + bird.getRandom().nextInt(360);
         bird.getNavigation().stop();
         setPerchedScale(bird, cage.size());
-        position(bird, cage.perch(root, facing), facing);
+        position(bird, seatPosition(cage, root, facing), facing);
     }
 
     public static void markForPacking(ServerLevel level, Player player, BlockPos root, BlockPos brokenPart) {
@@ -154,20 +182,20 @@ public final class CageRoost {
             pet -> pet.isAlive() && pet.isOwnedBy(player) && pet.getCageRoost().at(level, root))) {
             bird.getCageRoost().breakingPart = brokenPart.immutable();
             bird.getCageRoost().breakTick = level.getGameTime();
-            return;
         }
     }
 
-    public static PetParrotEntity takePackingCandidate(ServerLevel level, Player player, BlockPos brokenPart) {
+    public static List<PetParrotEntity> takePackingCandidates(ServerLevel level, Player player, BlockPos brokenPart) {
+        var result = new java.util.ArrayList<PetParrotEntity>();
         for (PetParrotEntity bird : level.getEntitiesOfClass(PetParrotEntity.class, new AABB(brokenPart).inflate(9),
             pet -> pet.isAlive() && pet.isOwnedBy(player))) {
             CageRoost roost = bird.getCageRoost();
             if (!roost.isAssigned() && brokenPart.equals(roost.breakingPart) && roost.breakTick == level.getGameTime()) {
                 roost.breakingPart = null;
-                return bird;
+                result.add(bird);
             }
         }
-        return null;
+        return result;
     }
 
     private static void message(Player player, String key, Object... arguments) {
@@ -262,7 +290,7 @@ public final class CageRoost {
             return;
         }
         setPerchedScale(bird, cage.size());
-        position(bird, cage.perch(anchor, facing), facing);
+        position(bird, seatPosition(cage, anchor, facing), facing);
         if (bird.tickCount % 20 == 0 && level.getBlockEntity(anchor) instanceof CageFittingsBlockEntity tray) {
             tray.recordOccupiedSecond();
             provisionSeconds = (provisionSeconds + 1) % 60;
@@ -304,7 +332,10 @@ public final class CageRoost {
         double oldFactor = currentFactor(bird);
         double naturalScale = scale.getValue() / oldFactor;
         // Fit the adult silhouette. Chicks then keep their usual proportion to an adult in the same cage.
-        double length = lengthCm(bird) * naturalScale / 16.0;
+        int cm = lengthCm(bird);
+        if (cage == cachedCage && cm == cachedLength && Math.abs(cachedNatural - naturalScale) < 1e-9
+            && Math.abs(cachedFactor - oldFactor) < 1e-9) return;
+        double length = cm * naturalScale / 16.0;
         EntityDimensions outside = bird.getType().getDimensions().scale((float) naturalScale);
         // Each tail extends behind the feet. The perch is offset along the long axis to give it more room.
         double displayScale = switch (cage) {
@@ -318,6 +349,10 @@ public final class CageRoost {
         double crossRoom = Math.min(cage.depth - 0.18, cage.width * 0.72 - 0.14);
         factor = Math.min(factor, crossRoom / outside.width());
         factor = Math.min(factor, (cage.height - cage.perchHeight - 0.12) / outside.height());
+        cachedFactor = factor;
+        cachedNatural = naturalScale;
+        cachedLength = cm;
+        cachedCage = cage;
         if (Math.abs(oldFactor - factor) < 0.00001) return;
         if (factor >= 1) scale.removeModifier(SCALE);
         else scale.addOrUpdateTransientModifier(new AttributeModifier(SCALE, factor - 1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));

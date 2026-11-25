@@ -123,6 +123,7 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
+    public static final BooleanProperty WIDE = BooleanProperty.create("wide");
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
     public static final BooleanProperty GARLAND = BooleanProperty.create("garland");
     public static final BooleanProperty BELL = BooleanProperty.create("bell");
@@ -139,7 +140,7 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
             .isSuffocating((state, level, pos) -> false));
         this.size = size;
         registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH).setValue(PART, Part.BASE)
-            .setValue(OPEN, false).setValue(GARLAND, false).setValue(BELL, false));
+            .setValue(WIDE, false).setValue(OPEN, false).setValue(GARLAND, false).setValue(BELL, false));
         for (Part part : size.parts) {
             for (boolean open : new boolean[]{false, true}) {
                 Shapes.rotateHorizontal(northShape(part, open)).forEach((facing, shape) ->
@@ -183,7 +184,7 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, PART, OPEN, GARLAND, BELL);
+        builder.add(FACING, PART, OPEN, WIDE, GARLAND, BELL);
     }
 
     @Override
@@ -355,9 +356,9 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
 
     @Override
     public void playerDestroy(ServerLevel level, ServerPlayer player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack tool) {
-        var resident = CageRoost.takePackingCandidate(level, player, pos);
-        if (resident != null && level.getGameRules().get(GameRules.BLOCK_DROPS)
-            && CageBirdCargo.dropFromCage(level, pos, CageDecorations.pack(shell(blockEntity), contents(state, blockEntity)), resident, player)) {
+        var residents = CageRoost.takePackingCandidates(level, player, pos);
+        if (!residents.isEmpty() && level.getGameRules().get(GameRules.BLOCK_DROPS)
+            && CageBirdCargo.dropFromCage(level, pos, CageDecorations.pack(shell(blockEntity), contents(state, blockEntity)), residents, player)) {
             player.awardStat(Stats.BLOCK_MINED.get(this));
             player.causeFoodExhaustion(0.005F);
             return;
@@ -527,7 +528,8 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
         Direction facing = state.getValue(FACING);
         if (!level.mayInteract(player, root) || !loaded(level, root, facing) || !complete(level, root, facing)) return InteractionResult.FAIL;
         boolean open = state.getValue(OPEN);
-        if (open) {
+        boolean closing = open && state.getValue(WIDE);
+        if (closing) {
             VoxelShape door = DOORS.get(facing);
             for (Part part : size.parts) {
                 if (part.z != 0) continue;
@@ -538,9 +540,13 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
                 }
             }
         }
-        change(level, root, facing, OPEN, !open);
-        level.playSound(null, root, open ? SoundEvents.IRON_DOOR_CLOSE : SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 0.65F, 1.12F);
-        level.gameEvent(player, open ? GameEvent.BLOCK_CLOSE : GameEvent.BLOCK_OPEN, root);
+        for (Part part : size.parts) {
+            BlockPos member = cell(root, facing, part);
+            level.setBlock(member, level.getBlockState(member).setValue(OPEN, !closing)
+                .setValue(WIDE, open && !closing), UPDATE_CLIENTS);
+        }
+        level.playSound(null, root, closing ? SoundEvents.IRON_DOOR_CLOSE : SoundEvents.IRON_DOOR_OPEN, SoundSource.BLOCKS, 0.65F, 1.12F);
+        level.gameEvent(player, closing ? GameEvent.BLOCK_CLOSE : GameEvent.BLOCK_OPEN, root);
         return InteractionResult.SUCCESS;
     }
 }

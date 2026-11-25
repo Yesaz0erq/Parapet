@@ -42,6 +42,7 @@ final class PetParrotRenderer<T extends PetParrotEntity> extends MobRenderer<T, 
         ParrotCageBlock.Size cage;
         CageBirdMotion cageMotion;
         CageMeal cageMeal;
+        float seatOffset;
         float speciesScale = 1F;
     }
 
@@ -88,6 +89,7 @@ final class PetParrotRenderer<T extends PetParrotEntity> extends MobRenderer<T, 
             state.speciesScale = modelScale;
             state.cageMotion = CageBirdMotion.forSpecies(ParrotEcology.forBird(entity));
             state.cageMeal = entity.getCageMeal();
+            state.seatOffset = (float) dev.parapet.cage.CageLayout.seatOffset(state.cage, entity.getCageSeat());
             transitions.remove(individual);
             return;
         }

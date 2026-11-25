@@ -4,6 +4,8 @@ import dev.parapet.Parapet;
 import dev.parapet.block.ParrotCageBlock;
 import dev.parapet.entity.ParrotEcology;
 import dev.parapet.entity.PetParrotEntity;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
@@ -107,6 +109,23 @@ public final class CageBirdCargo {
         return contents(cage).flatMap(tag -> tag.getString("Name"));
     }
 
+    private static List<CompoundTag> birds(CompoundTag first) {
+        List<CompoundTag> flock = new ArrayList<>();
+        for (CompoundTag entry = first; entry != null && flock.size() < 4; entry = entry.getCompound("Next").orElse(null)) {
+            flock.add(entry);
+        }
+        return flock;
+    }
+
+    public static int birdCount(ItemStack cage) {
+        return contents(cage).map(entry -> birds(entry).size()).orElse(0);
+    }
+
+    public static ItemStack afterSale(ItemStack cage) {
+        ItemStack shell = emptyCage(cage);
+        return contents(cage).flatMap(tag -> tag.getCompound("Next")).map(next -> filled(shell, next)).orElse(shell);
+    }
+
     public static ItemStack emptyCage(ItemStack cage) {
         ItemStack empty = cage.copyWithCount(1);
         clearContents(empty);
@@ -163,12 +182,21 @@ public final class CageBirdCargo {
     public static void capture(ServerLevel level, Player owner, net.minecraft.world.InteractionHand hand,
                                PetParrotEntity bird, ParrotCageBlock cage) {
         ItemStack empty = owner.getItemInHand(hand);
-        if (isOccupied(empty) || !bird.isOwnedBy(owner) || bird.isLeashed() || bird.getCageRoost().isAssigned()) return;
-        if (ParrotEcology.forBird(bird).size().compareTo(cage.size().maxBirdSize) > 0) {
+        if (!bird.isOwnedBy(owner) || bird.isLeashed() || bird.getCageRoost().isAssigned()) return;
+        Optional<CompoundTag> previous = authenticated(level, empty, true);
+        if (isOccupied(empty) && (previous.isEmpty() || !isOwnedBy(empty, owner))) return;
+        int used = previous.stream().flatMap(first -> birds(first).stream())
+            .mapToInt(entry -> ParrotEcology.forEntityId(Identifier.parse(entry.getStringOr("Type", "")))
+                .map(species -> CageRoost.units(species.size())).orElse(4)).sum();
+        if (used + CageRoost.units(ParrotEcology.forBird(bird).size()) > CageRoost.units(cage.size().maxBirdSize)) {
             owner.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.parapet.cage.too_large"));
             return;
         }
-        serialize(level, empty, bird, owner).ifPresent(entry -> {
+        serialize(level, emptyCage(empty), bird, owner).ifPresent(entry -> {
+            previous.ifPresent(old -> {
+                entry.put("Next", old.copy());
+                ledger(level).remove(old);
+            });
             ItemStack occupied = filled(empty, entry);
             ledger(level).add(entry);
             empty.shrink(1);
@@ -178,10 +206,16 @@ public final class CageBirdCargo {
         });
     }
 
-    public static boolean dropFromCage(ServerLevel level, BlockPos pos, ItemStack empty, PetParrotEntity bird, Player owner) {
-        var saved = serialize(level, empty, bird, owner);
-        if (saved.isEmpty()) return false;
-        CompoundTag entry = saved.get();
+    public static boolean dropFromCage(ServerLevel level, BlockPos pos, ItemStack empty, List<PetParrotEntity> flock, Player owner) {
+        if (flock.isEmpty() || flock.size() > 4) return false;
+        CompoundTag entry = null;
+        for (var bird : flock) {
+            var saved = serialize(level, empty, bird, owner);
+            if (saved.isEmpty()) return false;
+            CompoundTag next = saved.get();
+            if (entry != null) next.put("Next", entry);
+            entry = next;
+        }
         CargoLedger ledger = ledger(level);
         ItemStack occupied = filled(empty, entry);
         ItemEntity dropped = new ItemEntity(level, pos.getX() + .5, pos.getY() + .35, pos.getZ() + .5, occupied);
@@ -193,7 +227,7 @@ public final class CageBirdCargo {
             ledger.remove(entry);
             return false;
         }
-        bird.discard();
+        flock.forEach(PetParrotEntity::discard);
         return true;
     }
 
@@ -203,13 +237,26 @@ public final class CageBirdCargo {
         Optional<CompoundTag> checked = authenticated(level, stack, true);
         if (checked.isEmpty()) return false;
         CompoundTag entry = checked.get();
-        var type = entityTypeId(stack).flatMap(BuiltInRegistries.ENTITY_TYPE::getOptional);
-        if (type.isEmpty() || !(type.get().create(level, EntitySpawnReason.LOAD) instanceof PetParrotEntity bird)) return false;
-        bird.load(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), entry.getCompoundOrEmpty("Entity")));
-        if (!bird.isAlive() || !bird.isOwnedBy(owner) || !bird.getStringUUID().equals(key(entry))
-            || ParrotEcology.forBird(bird).size().compareTo(cage.size().maxBirdSize) > 0) return false;
-        bird.getCageRoost().settle(level, bird, cage, root, facing);
-        if (!level.addFreshEntity(bird)) return false;
+        var flock = new ArrayList<PetParrotEntity>();
+        int space = CageRoost.units(cage.size().maxBirdSize);
+        for (var record : birds(entry)) {
+            var type = record.getString("Type").map(Identifier::tryParse).flatMap(BuiltInRegistries.ENTITY_TYPE::getOptional);
+            if (type.isEmpty() || !(type.get().create(level, EntitySpawnReason.LOAD) instanceof PetParrotEntity bird)) return false;
+            bird.load(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), record.getCompoundOrEmpty("Entity")));
+            space -= CageRoost.units(ParrotEcology.forBird(bird).size());
+            if (space < 0 || !bird.isAlive() || !bird.isOwnedBy(owner) || !bird.getStringUUID().equals(key(record))
+                || level.getEntityInAnyDimension(bird.getUUID()) != null) return false;
+            flock.add(bird);
+        }
+        var added = new ArrayList<PetParrotEntity>();
+        for (var bird : flock) {
+            bird.getCageRoost().settle(level, bird, cage, root, facing);
+            if (!level.addFreshEntity(bird)) {
+                added.forEach(PetParrotEntity::discard);
+                return false;
+            }
+            added.add(bird);
+        }
         ledger(level).remove(entry);
         if (owner.hasInfiniteMaterials()) clearContents(stack);
         return true;
@@ -221,6 +268,7 @@ public final class CageBirdCargo {
         Optional<CompoundTag> checked = authenticated(level, cage, true);
         if (checked.isEmpty()) return false;
         ledger(level).remove(checked.get());
+        checked.get().getCompound("Next").ifPresent(ledger(level)::add);
         return true;
     }
 }

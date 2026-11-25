@@ -78,6 +78,8 @@ public abstract class PetParrotEntity extends TamableAnimal {
         SynchedEntityData.defineId(PetParrotEntity.class, EntityDataSerializers.LONG);
     private static final EntityDataAccessor<Integer> CAGE_TIER =
         SynchedEntityData.defineId(PetParrotEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> CAGE_SEAT =
+        SynchedEntityData.defineId(PetParrotEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> CAGE_MEAL =
         SynchedEntityData.defineId(PetParrotEntity.class, EntityDataSerializers.INT);
     private static final ParrotCageBlock.Size[] CAGE_SIZES = ParrotCageBlock.Size.values();
@@ -235,6 +237,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
         builder.define(ACTIVITY, PetParrotActivity.IDLE.ordinal());
         builder.define(ACTIVITY_START, 0L);
         builder.define(CAGE_TIER, -1);
+        builder.define(CAGE_SEAT, 0);
         builder.define(CAGE_MEAL, CageMeal.HAND.ordinal());
     }
 
@@ -253,6 +256,10 @@ public abstract class PetParrotEntity extends TamableAnimal {
         entityData.set(CAGE_MEAL, CageMeal.HAND.ordinal());
         setActivity(PetParrotActivity.IDLE);
     }
+
+    public final int getCageSeat() { return entityData.get(CAGE_SEAT); }
+
+    public final void setCageSeat(int seat) { entityData.set(CAGE_SEAT, seat); }
 
     public final CageMeal getCageMeal() {
         return CageMeal.byIndex(entityData.get(CAGE_MEAL));

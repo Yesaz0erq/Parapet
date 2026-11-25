@@ -34,19 +34,27 @@ import net.minecraft.world.phys.Vec3;
 
 public final class CageFittingsRenderer implements BlockEntityRenderer<CageFittingsBlockEntity, CageFittingsRenderer.State> {
     static final class State extends BlockEntityRenderState {
-        final EnumMap<CageToy, ItemStackRenderState> toys = new EnumMap<>(CageToy.class);
-
-        State() {
-            for (CageToy toy : CageToy.values()) toys.put(toy, new ItemStackRenderState());
-        }
-        final ItemStackRenderState bowl = new ItemStackRenderState();
-        final BlockModelRenderState seed = new BlockModelRenderState();
-        final BlockModelRenderState premium = new BlockModelRenderState();
+        Fittings fitted;
+        ItemStackRenderState bowl;
         ParrotCageBlock.Size size;
         float rotation;
         boolean dirty;
     }
 
+    private static final class Fittings {
+        final EnumMap<CageToy, ItemStackRenderState> toys = new EnumMap<>(CageToy.class);
+
+        Fittings() {
+            for (CageToy toy : CageToy.values()) toys.put(toy, new ItemStackRenderState());
+        }
+        final ItemStackRenderState bowl = new ItemStackRenderState();
+        final BlockModelRenderState seed = new BlockModelRenderState();
+        final BlockModelRenderState premium = new BlockModelRenderState();
+        ItemStack bowlStack = ItemStack.EMPTY;
+        net.minecraft.world.item.component.ItemContainerContents contents;
+    }
+
+    private final java.util.Map<CageFittingsBlockEntity, Fittings> cache = new java.util.WeakHashMap<>();
     private static final Identifier SUSPENDED_SWING = Parapet.id("cage_fitting/rope_swing");
     private static final Identifier CLIPPED_BLOCKS = Parapet.id("cage_fitting/chew_blocks");
     private static final BlockDisplayContext BLOCK_DISPLAY = BlockDisplayContext.create();
@@ -74,8 +82,27 @@ public final class CageFittingsRenderer implements BlockEntityRenderer<CageFitti
         state.size = ((ParrotCageBlock) block.getBlock()).size();
         state.dirty = entity.needsCleaning();
         state.rotation = 180 - block.getValue(ParrotCageBlock.FACING).toYRot();
-        state.toys.values().forEach(ItemStackRenderState::clear);
-        state.bowl.clear();
+        Fittings fitted = cache.get(entity);
+        if (fitted != null && fitted.contents == entity.fittings()) {
+            state.fitted = fitted;
+            state.bowl = fitted.bowl;
+            if (fitted.bowl.isAnimated()) {
+                state.bowl = new ItemStackRenderState();
+                models.updateForTopItem(state.bowl, fitted.bowlStack, ItemDisplayContext.NONE, entity.getLevel(), null, 0);
+            }
+            return;
+        }
+        fitted = new Fittings();
+        state.fitted = fitted;
+        bake(entity, fitted);
+        state.bowl = fitted.bowl;
+        if (fitted.toys.values().stream().noneMatch(ItemStackRenderState::isAnimated)) {
+            fitted.contents = entity.fittings();
+            cache.put(entity, fitted);
+        } else cache.remove(entity);
+    }
+
+    private void bake(CageFittingsBlockEntity entity, Fittings state) {
         int seedCount = 0;
         int premiumCount = 0;
         for (var fitting : entity.fittings().nonEmptyItems()) {
@@ -84,7 +111,8 @@ public final class CageFittingsRenderer implements BlockEntityRenderer<CageFitti
             } else if (fitting.is(ParapetFurniture.PREMIUM_BIRD_FEED)) {
                 premiumCount += Math.min(CageSupplies.FEED_CAPACITY, fitting.count());
             } else if (fitting.is(ParapetFurniture.WATER_BOWL.asItem())) {
-                models.updateForTopItem(state.bowl, fitting.create(), ItemDisplayContext.NONE, entity.getLevel(), null, 0);
+                state.bowlStack = fitting.create();
+                models.updateForTopItem(state.bowl, state.bowlStack, ItemDisplayContext.NONE, entity.getLevel(), null, 0);
             } else {
                 ItemStack stack = fitting.create();
                 CageToy.forItem(stack).ifPresent(toy -> {
@@ -130,7 +158,7 @@ public final class CageFittingsRenderer implements BlockEntityRenderer<CageFitti
                 });
             poses.popPose();
         }
-        for (var fitting : state.toys.entrySet()) {
+        for (var fitting : state.fitted.toys.entrySet()) {
             if (fitting.getValue().isEmpty()) continue;
             var mount = CageLayout.toyPlacement(size, fitting.getKey());
             poses.pushPose();
@@ -145,8 +173,8 @@ public final class CageFittingsRenderer implements BlockEntityRenderer<CageFitti
         float dishScale = CageLayout.dishScale(size);
         Vec3 water = CageLayout.mealPosition(size, CageMeal.WATER);
         draw(state.bowl, poses, collector, state.lightCoords, new Vec3(water.x, CageLayout.shelfHeight(size), water.z), dishScale);
-        drawPile(state.seed, poses, collector, state.lightCoords, size, CageMeal.SEED);
-        drawPile(state.premium, poses, collector, state.lightCoords, size, CageMeal.PREMIUM);
+        drawPile(state.fitted.seed, poses, collector, state.lightCoords, size, CageMeal.SEED);
+        drawPile(state.fitted.premium, poses, collector, state.lightCoords, size, CageMeal.PREMIUM);
         poses.popPose();
     }
 

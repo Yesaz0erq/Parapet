@@ -21,6 +21,7 @@ public final class CageFittingsBlockEntity extends BlockEntity {
     private static final String PACKED_TRAY_SECONDS = "parapet:tray_seconds";
     private ItemContainerContents fittings = ItemContainerContents.EMPTY;
     private int occupiedSeconds;
+    private long nextOccupiedSecond;
 
     public CageFittingsBlockEntity(BlockPos pos, BlockState state) {
         super(ParapetFurniture.CAGE_FITTINGS, pos, state);
@@ -31,7 +32,8 @@ public final class CageFittingsBlockEntity extends BlockEntity {
     public boolean needsCleaning() { return occupiedSeconds == SECONDS_UNTIL_DIRTY; }
 
     public void recordOccupiedSecond() {
-        if (needsCleaning()) return;
+        if (needsCleaning() || level == null || level.getGameTime() < nextOccupiedSecond) return;
+        nextOccupiedSecond = level.getGameTime() + 20;
         occupiedSeconds++;
         setChanged();
         if (needsCleaning()) syncAppearance();

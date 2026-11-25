@@ -120,6 +120,7 @@ final class PetParrotModel extends EntityModel<PetParrotRenderer.State> {
         var approach = cageFeeding.approach(state, units);
         clips.cageFeed.apply(Math.round(clipPhase * 1600F), reach * approach.weight());
         CageFeedingPose.moveFeet(approach, units, phase, bird, leftLeg, rightLeg);
+        if (state.cageMeal != CageMeal.HAND) bird.z += reach * state.seatOffset / units;
         bird.yRot += approach.bodyYaw() * reach;
         head.yRot += approach.headYaw() * reach;
         // The tail stays nearer the main rail as the breast turns towards a lateral feeder.

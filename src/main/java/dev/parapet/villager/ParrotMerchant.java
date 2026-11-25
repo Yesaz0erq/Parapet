@@ -126,7 +126,7 @@ public final class ParrotMerchant {
         }
 
         // Redeem the unique world record before changing the cage or crediting either party.
-        ItemStack emptyCage = CageBirdCargo.emptyCage(cage);
+        ItemStack emptyCage = CageBirdCargo.afterSale(cage);
         if (emptyCage.isEmpty() || !CageBirdCargo.redeem(level, cage, player)) {
             message(player, "invalid");
             return;

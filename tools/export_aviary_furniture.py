@@ -71,13 +71,13 @@ def transform_cube(cube, transform):
                     "to": [round(max(p,q), 4) for p,q in zip(a,b)]}
 
 
-def open_leaf(cube, right, width):
+def open_leaf(cube, right, width, angle):
     # The pivot is local to the closed leaf's multipart cell. Minecraft rotates
     # the baked vertices out past the front face without adding collision cells.
     x, y, z = [int((a+b)/32) for a,b in zip(cube["from"], cube["to"])]
     part, local = cell_for(cube)
     hinge_x = width - 1.92 if right else 1.92
-    local["rotation"] = {"axis": "y", "angle": -45 if right else 45,
+    local["rotation"] = {"axis": "y", "angle": -angle if right else angle,
                          "origin": [round(hinge_x-16*x, 4), 0, round(1.92-16*z, 4)]}
     return part, local
 
@@ -190,14 +190,15 @@ def export_cage(name, groups):
             if group.startswith("door_"):
                 part, closed = cell_for(cube)
                 layers[part]["closed"].append(closed)
-                part, opened = open_leaf(cube, group == "door_right", width)
-                layers[part]["open"].append(opened)
+                for angle, layer in ((45, "open"), (90, "wide")):
+                    part, opened = open_leaf(cube, group == "door_right", width, angle)
+                    layers[part][layer].append(opened)
             else:
                 part, local = cell_for(cube)
                 layers[part][group].append(local)
 
     multipart = []
-    predicates = {"open":{"open":"true"}, "closed":{"open":"false"}, "frame":{},
+    predicates = {"open":{"open":"true", "wide":"false"}, "wide":{"open":"true","wide":"true"}, "closed":{"open":"false"}, "frame":{},
                   "garland":{"garland":"true"}, "bell":{"bell":"true"}}
     for part, states in layers.items():
         for state, elements in states.items():
@@ -213,6 +214,15 @@ def export_cage(name, groups):
     if without_mesh:
         multipart.append({"when":{"part":"|".join(without_mesh)}, "apply":{"model":"parapet:block/aviary/empty"}})
     write(ASSETS / "blockstates" / (name + ".json"), {"multipart":multipart})
+
+    # Only prune generated part/layer names belonging to the cage just exported.
+    expected = {f"{part}_{layer}" for part, states in layers.items() for layer in states}
+    folder = ASSETS / "models/block/aviary" / name
+    for part in all_parts:
+        for layer in predicates:
+            stem = f"{part}_{layer}"
+            if stem not in expected:
+                (folder / (stem + ".json")).unlink(missing_ok=True)
 
     scale = 16 / max(width, height)
     def centred(x,y,z):

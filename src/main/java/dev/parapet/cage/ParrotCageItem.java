@@ -31,6 +31,8 @@ public final class ParrotCageItem extends BlockItem {
         CageBirdCargo.birdName(stack).ifPresent(name -> lines.accept(Component.translatable(
             CageBirdCargo.isAdult(stack) ? "tooltip.parapet.cage.adult" : "tooltip.parapet.cage.juvenile", name
         ).withStyle(ChatFormatting.AQUA)));
+        int birds = CageBirdCargo.birdCount(stack);
+        if (birds > 1) lines.accept(Component.translatable("tooltip.parapet.cage.flock", birds));
         var size = ((ParrotCageBlock) getBlock()).size();
         var fittings = CageDecorations.contents(stack);
         int used = CageToy.installedCount(fittings);

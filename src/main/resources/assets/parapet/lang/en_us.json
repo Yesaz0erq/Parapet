@@ -451,5 +451,6 @@
   "message.parapet.cage.toy_full": "Toy slots are full (%1$s / %2$s). Use shears to remove a toy first.",
   "message.parapet.cage.toy_removed": "Removed %s",
   "message.parapet.cage.toy_none": "There are no toys to remove",
-  "message.parapet.cage.toy_owner_only": "Only this parrot’s owner can change its toys"
+  "message.parapet.cage.toy_owner_only": "Only this parrot’s owner can change its toys",
+  "tooltip.parapet.cage.flock": "Parrots in cage: %s"
 }

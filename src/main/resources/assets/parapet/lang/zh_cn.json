@@ -451,5 +451,6 @@
   "message.parapet.cage.toy_full": "玩具位已满（%1$s / %2$s），先用剪刀取下一件",
   "message.parapet.cage.toy_removed": "已取下%s",
   "message.parapet.cage.toy_none": "笼中没有可取下的玩具",
-  "message.parapet.cage.toy_owner_only": "只有笼中鹦鹉的主人可以拆装玩具"
+  "message.parapet.cage.toy_owner_only": "只有笼中鹦鹉的主人可以拆装玩具",
+  "tooltip.parapet.cage.flock": "笼内共有 %s 只鹦鹉"
 }
