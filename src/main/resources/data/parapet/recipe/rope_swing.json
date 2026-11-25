@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:string",
+    "minecraft:string",
+    "minecraft:stick",
+    "#minecraft:wooden_slabs"
+  ],
+  "result": {
+    "id": "parapet:rope_swing",
+    "count": 1
+  }
+}

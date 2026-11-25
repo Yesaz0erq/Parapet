@@ -1,0 +1,41 @@
+{
+  "model": {
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:model",
+        "model": "parapet:item/aviary/parrot_cage"
+      },
+      {
+        "type": "minecraft:condition",
+        "property": "minecraft:component",
+        "predicate": "minecraft:custom_data",
+        "value": {
+          "parapet:cage_garland": true
+        },
+        "on_true": {
+          "type": "minecraft:model",
+          "model": "parapet:item/aviary/parrot_cage_garland"
+        },
+        "on_false": {
+          "type": "minecraft:empty"
+        }
+      },
+      {
+        "type": "minecraft:condition",
+        "property": "minecraft:component",
+        "predicate": "minecraft:custom_data",
+        "value": {
+          "parapet:hanging_bell": true
+        },
+        "on_true": {
+          "type": "minecraft:model",
+          "model": "parapet:item/aviary/parrot_cage_bell"
+        },
+        "on_false": {
+          "type": "minecraft:empty"
+        }
+      }
+    ]
+  }
+}

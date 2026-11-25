@@ -1,0 +1,321 @@
+package dev.parapet.cage;
+
+import dev.parapet.Parapet;
+import dev.parapet.block.ParrotCageBlock;
+import dev.parapet.entity.AfricanGreyEntity;
+import dev.parapet.entity.BudgerigarEntity;
+import dev.parapet.entity.CaiqueEntity;
+import dev.parapet.entity.CockatielEntity;
+import dev.parapet.entity.CompanionParrotEntity;
+import dev.parapet.entity.EclectusEntity;
+import dev.parapet.entity.GreenCheekConureEntity;
+import dev.parapet.entity.LovebirdEntity;
+import dev.parapet.entity.MacawEntity;
+import dev.parapet.entity.MonkParakeetEntity;
+import dev.parapet.entity.ParrotEcology;
+import dev.parapet.entity.PetParrotActivity;
+import dev.parapet.entity.PetParrotEntity;
+import dev.parapet.entity.SulfurCrestedCockatooEntity;
+import java.util.Comparator;
+import java.util.List;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+
+/** A perch belongs to a live entity. No cage item or cage block stores a second copy of a bird. */
+public final class CageRoost {
+    private static final Identifier SCALE = Parapet.id("cage_perch_scale");
+    private BlockPos anchor;
+    private String dimension = "";
+    private String sizeName = "";
+    private int bellCooldown;
+    private BlockPos breakingPart;
+    private long breakTick;
+
+    public boolean isAssigned() {
+        return anchor != null;
+    }
+
+    public void save(ValueOutput output) {
+        if (anchor != null) {
+            output.store("CagePerch", BlockPos.CODEC, anchor);
+            output.putString("CageDimension", dimension);
+            output.putString("CageSize", sizeName);
+        }
+    }
+
+    public void load(ValueInput input, PetParrotEntity bird) {
+        anchor = input.read("CagePerch", BlockPos.CODEC).orElse(null);
+        dimension = input.getStringOr("CageDimension", "");
+        sizeName = input.getStringOr("CageSize", "");
+        bellCooldown = 240 + bird.getRandom().nextInt(360);
+        if (anchor != null && dimension.equals(bird.level().dimension().identifier().toString())) {
+            for (ParrotCageBlock.Size size : ParrotCageBlock.Size.values()) {
+                if (size.name().equals(sizeName)) {
+                    setPerchedScale(bird, size);
+                    bird.setInSittingPose(true);
+                    return;
+                }
+            }
+        }
+        anchor = null;
+        if (bird.getAttribute(Attributes.SCALE).removeModifier(SCALE)) {
+            bird.refreshDimensions();
+            bird.setInSittingPose(bird.isOrderedToSit());
+        }
+    }
+
+    private boolean at(ServerLevel level, BlockPos pos) {
+        return pos.equals(anchor) && dimension.equals(level.dimension().identifier().toString());
+    }
+
+    public static void registerInteractions() {
+        // Vanilla skips the block interaction when a sneaking player holds an item in either hand.
+        UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+            if (hand != InteractionHand.MAIN_HAND || player.isSpectator() || !player.isSecondaryUseActive()
+                || player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()) return InteractionResult.PASS;
+            BlockPos pos = hit.getBlockPos();
+            BlockState state = level.getBlockState(pos);
+            if (state.getBlock() instanceof ParrotCageBlock cage && cage.isEnabled(level.enabledFeatures())) {
+                return cage.transferBird(state, level, pos, player);
+            }
+            return InteractionResult.PASS;
+        });
+    }
+
+    public static void transfer(ServerLevel level, ParrotCageBlock cage, BlockPos anchor, Direction facing, Player player) {
+        Vec3 perch = cage.perch(anchor, facing);
+        if (!level.areEntitiesLoaded(ChunkPos.pack(BlockPos.containing(perch)))) return;
+        List<PetParrotEntity> occupants = level.getEntitiesOfClass(PetParrotEntity.class, new AABB(anchor).inflate(4),
+            bird -> bird.isAlive() && bird.getCageRoost().at(level, anchor));
+        if (!occupants.isEmpty()) {
+            PetParrotEntity bird = occupants.getFirst();
+            if (!bird.isOwnedBy(player)) {
+                message(player, "occupied");
+                return;
+            }
+            Vec3 exit = findExit(level, bird, cage, anchor, facing);
+            if (exit == null) {
+                message(player, "exit_blocked");
+                return;
+            }
+            bird.getCageRoost().release(bird, exit);
+            message(player, "released", bird.getDisplayName());
+            return;
+        }
+        Vec3 doorway = perch.relative(facing, cage.size().depth * 0.5 + 0.04).add(0, 0.16, 0);
+        List<PetParrotEntity> nearby = level.getEntitiesOfClass(PetParrotEntity.class, AABB.ofSize(doorway, 10, 10, 10),
+            bird -> bird.isAlive() && bird.isTame() && bird.isOwnedBy(player) && !bird.isLeashed()
+                && !bird.isPassenger() && !bird.isVehicle() && !bird.getCageRoost().isAssigned()
+                && bird.distanceToSqr(doorway) <= 25 && bird.hasLineOfSight(player)
+                && clearPath(level, bird, doorway, bird.getEyePosition()));
+        nearby.sort(Comparator.comparingDouble(bird -> bird.distanceToSqr(doorway)));
+        for (PetParrotEntity bird : nearby) {
+            if (ParrotEcology.forBird(bird).size().compareTo(cage.size().maxBirdSize) > 0) continue;
+            bird.getCageRoost().settle(level, bird, cage, anchor, facing);
+            message(player, "entered", bird.getDisplayName());
+            return;
+        }
+        message(player, nearby.isEmpty() ? "no_bird" : "too_large");
+    }
+
+    void settle(ServerLevel level, PetParrotEntity bird, ParrotCageBlock cage, BlockPos root, Direction facing) {
+        anchor = root.immutable();
+        dimension = level.dimension().identifier().toString();
+        sizeName = cage.size().name();
+        bellCooldown = 240 + bird.getRandom().nextInt(360);
+        bird.getNavigation().stop();
+        setPerchedScale(bird, cage.size());
+        position(bird, cage.perch(root, facing), facing);
+    }
+
+    public static void markForPacking(ServerLevel level, Player player, BlockPos root, BlockPos brokenPart) {
+        for (PetParrotEntity bird : level.getEntitiesOfClass(PetParrotEntity.class, new AABB(root).inflate(4),
+            pet -> pet.isAlive() && pet.isOwnedBy(player) && pet.getCageRoost().at(level, root))) {
+            bird.getCageRoost().breakingPart = brokenPart.immutable();
+            bird.getCageRoost().breakTick = level.getGameTime();
+            return;
+        }
+    }
+
+    public static PetParrotEntity takePackingCandidate(ServerLevel level, Player player, BlockPos brokenPart) {
+        for (PetParrotEntity bird : level.getEntitiesOfClass(PetParrotEntity.class, new AABB(brokenPart).inflate(9),
+            pet -> pet.isAlive() && pet.isOwnedBy(player))) {
+            CageRoost roost = bird.getCageRoost();
+            if (!roost.isAssigned() && brokenPart.equals(roost.breakingPart) && roost.breakTick == level.getGameTime()) {
+                roost.breakingPart = null;
+                return bird;
+            }
+        }
+        return null;
+    }
+
+    private static void message(Player player, String key, Object... arguments) {
+        player.sendOverlayMessage(Component.translatable("message.parapet.cage." + key, arguments));
+    }
+
+    private static boolean clearPath(ServerLevel level, PetParrotEntity bird, Vec3 from, Vec3 to) {
+        return level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, bird))
+            .getType() == HitResult.Type.MISS;
+    }
+
+    private double currentFactor(PetParrotEntity bird) {
+        AttributeModifier current = bird.getAttribute(Attributes.SCALE).getModifier(SCALE);
+        return current == null ? 1 : 1 + current.amount();
+    }
+
+    private EntityDimensions outsideDimensions(PetParrotEntity bird) {
+        return bird.getDimensions(bird.getPose()).scale((float) (1 / currentFactor(bird)));
+    }
+
+    private static Vec3 findExit(ServerLevel level, PetParrotEntity bird, ParrotCageBlock cage,
+                                 BlockPos root, Direction facing) {
+        Vec3 inside = cage.perch(root, facing);
+        EntityDimensions dimensions = bird.getCageRoost().outsideDimensions(bird);
+        Vec3 doorway = inside.relative(facing, cage.size().depth * 0.5 + 0.03);
+        Vec3 front = doorway.relative(facing, dimensions.width() * 0.5 + 0.12);
+        for (double lateral : new double[]{0, -0.65, 0.65}) {
+            for (double lift : new double[]{0.07, 0.55, 1.05}) {
+                Vec3 exit = front.relative(facing.getClockWise(), lateral).with(Direction.Axis.Y, root.getY() + lift);
+                if (clearPath(level, bird, doorway.add(0, 0.10, 0), exit.add(0, 0.1, 0))
+                    && safeSpace(level, bird, dimensions, exit)) return exit;
+            }
+        }
+        return null;
+    }
+
+    private static boolean safeSpace(ServerLevel level, PetParrotEntity bird, EntityDimensions dimensions, Vec3 feet) {
+        AABB box = dimensions.makeBoundingBox(feet);
+        return level.getWorldBorder().isWithinBounds(box) && level.noCollision(bird, box) && !level.containsAnyLiquid(box);
+    }
+
+    public static void onBroken(ServerLevel level, BlockPos root) {
+        for (PetParrotEntity bird : level.getEntitiesOfClass(PetParrotEntity.class, new AABB(root).inflate(4),
+            pet -> pet.getCageRoost().at(level, root))) {
+            bird.getCageRoost().clearBrokenRoost(level, bird);
+        }
+    }
+
+    private void clearBrokenRoost(ServerLevel level, PetParrotEntity bird) {
+        EntityDimensions restored = outsideDimensions(bird);
+        Vec3 feet = bird.position();
+        if (!safeSpace(level, bird, restored, feet)) {
+            for (BlockPos pos : BlockPos.withinManhattan(bird.blockPosition(), 3)) {
+                Vec3 candidate = Vec3.atBottomCenterOf(pos);
+                if (safeSpace(level, bird, restored, candidate)) {
+                    feet = candidate;
+                    break;
+                }
+            }
+        }
+        release(bird, feet);
+    }
+
+    private void release(PetParrotEntity bird, Vec3 feet) {
+        anchor = null;
+        dimension = "";
+        sizeName = "";
+        bird.snapTo(feet);
+        if (bird.getAttribute(Attributes.SCALE).removeModifier(SCALE)) bird.refreshDimensions();
+        bird.snapTo(feet);
+        bird.setDeltaMovement(Vec3.ZERO);
+        bird.setInSittingPose(bird.isOrderedToSit());
+    }
+
+    public void tick(ServerLevel level, PetParrotEntity bird) {
+        if (anchor == null) return;
+        if (!at(level, anchor) || bird.distanceToSqr(Vec3.atCenterOf(anchor)) > 36 || bird.isPassenger()) {
+            release(bird, bird.position());
+            return;
+        }
+        if (!level.hasChunkAt(anchor)) return;
+        BlockState state = level.getBlockState(anchor);
+        if (!(state.getBlock() instanceof ParrotCageBlock cage) || state.getValue(ParrotCageBlock.PART) != ParrotCageBlock.Part.BASE
+            || !cage.size().name().equals(sizeName)) {
+            clearBrokenRoost(level, bird);
+            return;
+        }
+        Direction facing = state.getValue(ParrotCageBlock.FACING);
+        if (bird.tickCount % 20 == 0 && cage.loaded(level, anchor, facing) && !cage.complete(level, anchor, facing)) {
+            clearBrokenRoost(level, bird);
+            return;
+        }
+        setPerchedScale(bird, cage.size());
+        position(bird, cage.perch(anchor, facing), facing);
+        if (bird.getActivity() != PetParrotActivity.NIGHT_ROOST && state.getValue(ParrotCageBlock.BELL) && --bellCooldown <= 0) {
+            bellCooldown = 240 + bird.getRandom().nextInt(360);
+            level.playSound(null, anchor, SoundEvents.BELL_BLOCK, SoundSource.NEUTRAL, 0.20F, 1.65F);
+            level.sendParticles(ParticleTypes.NOTE, bird.getX(), bird.getEyeY() + 0.08, bird.getZ(), 1, 0, 0, 0, 0);
+        }
+    }
+
+    private void position(PetParrotEntity bird, Vec3 perch, Direction facing) {
+        bird.getMoveControl().setWait();
+        bird.setDeltaMovement(Vec3.ZERO);
+        bird.setJumping(false);
+        bird.setXxa(0);
+        bird.setYya(0);
+        bird.setZza(0);
+        if (bird.distanceToSqr(perch) > 0.00001) bird.snapTo(perch);
+        float yaw = facing.getClockWise().toYRot();
+        bird.setYRot(yaw);
+        bird.setYBodyRot(yaw);
+        bird.setYHeadRot(yaw);
+        bird.setXRot(0);
+        bird.setOnGround(true);
+        bird.setInSittingPose(true);
+    }
+
+    private void setPerchedScale(PetParrotEntity bird, ParrotCageBlock.Size cage) {
+        AttributeInstance scale = bird.getAttribute(Attributes.SCALE);
+        double oldFactor = currentFactor(bird);
+        double naturalScale = scale.getValue() / oldFactor;
+        double length = lengthCm(bird) * naturalScale * bird.getAgeScale() / 16.0;
+        EntityDimensions outside = outsideDimensions(bird);
+        // Each tail extends behind the feet. The perch is offset along the long axis to give it more room.
+        double factor = Math.min(1, 0.80 * (cage.width - 0.20) / length);
+        double crossRoom = Math.min(cage.depth - 0.18, cage.width * 0.72 - 0.14);
+        factor = Math.min(factor, crossRoom / outside.width());
+        factor = Math.min(factor, (cage.height - cage.perchHeight - 0.12) / outside.height());
+        if (Math.abs(oldFactor - factor) < 0.00001) return;
+        if (factor >= 1) scale.removeModifier(SCALE);
+        else scale.addOrUpdateTransientModifier(new AttributeModifier(SCALE, factor - 1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+        bird.refreshDimensions();
+    }
+
+    private static int lengthCm(PetParrotEntity bird) {
+        if (bird instanceof MacawEntity macaw) return macaw.getSpecies().lengthCm();
+        if (bird instanceof CompanionParrotEntity companion) return companion.getSpecies().lengthCm();
+        if (bird instanceof AfricanGreyEntity grey) return grey.getPlumageId().equals("timneh") ? 30 : 33;
+        if (bird instanceof BudgerigarEntity) return 18;
+        if (bird instanceof LovebirdEntity) return 15;
+        if (bird instanceof CaiqueEntity) return 23;
+        if (bird instanceof GreenCheekConureEntity) return 26;
+        if (bird instanceof MonkParakeetEntity) return 29;
+        if (bird instanceof CockatielEntity) return 31;
+        if (bird instanceof EclectusEntity) return 35;
+        if (bird instanceof SulfurCrestedCockatooEntity) return 50;
+        return 30; // Sun conure
+    }
+}

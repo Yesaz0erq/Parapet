@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald"
+  },
+  "gives": {
+    "id": "parapet:bird_feed",
+    "count": 4
+  },
+  "xp": 2,
+  "max_uses": 12,
+  "reputation_discount": 0.05
+}

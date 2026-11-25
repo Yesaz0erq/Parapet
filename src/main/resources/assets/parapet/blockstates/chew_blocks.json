@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "parapet:block/aviary/chew_blocks"
+    },
+    "active=true": {
+      "model": "parapet:block/aviary/chew_blocks_active"
+    }
+  }
+}

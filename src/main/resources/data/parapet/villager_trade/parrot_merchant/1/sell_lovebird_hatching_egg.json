@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 8
+  },
+  "gives": {
+    "id": "parapet:lovebird_hatching_egg"
+  },
+  "xp": 2,
+  "max_uses": 3,
+  "reputation_discount": 0.05
+}

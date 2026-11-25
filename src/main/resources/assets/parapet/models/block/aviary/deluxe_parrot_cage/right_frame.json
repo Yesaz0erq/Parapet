@@ -1,0 +1,287 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "brass": "parapet:block/aviary/brass",
+    "perch_bark": "parapet:block/aviary/perch_bark",
+    "verdigris": "parapet:block/aviary/verdigris",
+    "walnut": "parapet:block/aviary/walnut",
+    "particle": "parapet:block/aviary/walnut"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0.69,
+        0.18
+      ],
+      "to": [
+        16,
+        2,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            11,
+            16,
+            12.31
+          ],
+          "texture": "#walnut"
+        },
+        "east": {
+          "uv": [
+            0,
+            9,
+            15.82,
+            10.31
+          ],
+          "texture": "#walnut"
+        },
+        "south": {
+          "uv": [
+            0,
+            11,
+            16,
+            12.31
+          ],
+          "texture": "#walnut"
+        },
+        "west": {
+          "uv": [
+            0,
+            9,
+            15.82,
+            10.31
+          ],
+          "texture": "#walnut"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            15.82
+          ],
+          "texture": "#walnut"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            15.82
+          ],
+          "texture": "#walnut"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0.91,
+        0.03
+      ],
+      "to": [
+        16,
+        1.81,
+        0.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            4,
+            16,
+            4.9
+          ],
+          "texture": "#verdigris"
+        },
+        "east": {
+          "uv": [
+            12,
+            15,
+            12.17,
+            15.9
+          ],
+          "texture": "#verdigris"
+        },
+        "south": {
+          "uv": [
+            0,
+            4,
+            16,
+            4.9
+          ],
+          "texture": "#verdigris"
+        },
+        "west": {
+          "uv": [
+            12,
+            15,
+            12.17,
+            15.9
+          ],
+          "texture": "#verdigris"
+        },
+        "up": {
+          "uv": [
+            0,
+            10,
+            16,
+            10.17
+          ],
+          "texture": "#verdigris"
+        },
+        "down": {
+          "uv": [
+            0,
+            10,
+            16,
+            10.17
+          ],
+          "texture": "#verdigris"
+        }
+      }
+    },
+    {
+      "from": [
+        7.15,
+        1.17,
+        0
+      ],
+      "to": [
+        8.85,
+        1.63,
+        0.16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            9,
+            5.7,
+            9.46
+          ],
+          "texture": "#brass"
+        },
+        "east": {
+          "uv": [
+            0,
+            11,
+            0.16,
+            11.46
+          ],
+          "texture": "#brass"
+        },
+        "south": {
+          "uv": [
+            4,
+            9,
+            5.7,
+            9.46
+          ],
+          "texture": "#brass"
+        },
+        "west": {
+          "uv": [
+            0,
+            11,
+            0.16,
+            11.46
+          ],
+          "texture": "#brass"
+        },
+        "up": {
+          "uv": [
+            10,
+            7,
+            11.7,
+            7.16
+          ],
+          "texture": "#brass"
+        },
+        "down": {
+          "uv": [
+            10,
+            7,
+            11.7,
+            7.16
+          ],
+          "texture": "#brass"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        11,
+        15.44
+      ],
+      "to": [
+        16,
+        12,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            2,
+            16,
+            3
+          ],
+          "texture": "#perch_bark"
+        },
+        "east": {
+          "uv": [
+            12,
+            0,
+            13,
+            0.56
+          ],
+          "texture": "#perch_bark",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            0,
+            2,
+            16,
+            3
+          ],
+          "texture": "#perch_bark"
+        },
+        "west": {
+          "uv": [
+            12,
+            0,
+            13,
+            0.56
+          ],
+          "texture": "#perch_bark",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            0,
+            15,
+            16,
+            15.56
+          ],
+          "texture": "#perch_bark"
+        },
+        "down": {
+          "uv": [
+            0,
+            15,
+            16,
+            15.56
+          ],
+          "texture": "#perch_bark"
+        }
+      }
+    }
+  ]
+}

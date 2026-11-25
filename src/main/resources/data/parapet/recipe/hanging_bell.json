@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "GGG",
+    " N "
+  ],
+  "key": {
+    "S": "minecraft:string",
+    "G": "minecraft:gold_nugget",
+    "N": "minecraft:iron_nugget"
+  },
+  "result": {
+    "id": "parapet:hanging_bell",
+    "count": 1
+  }
+}

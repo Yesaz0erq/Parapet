@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "parapet:item/rainbow_lorikeet_spawn_egg"
+  }
+}

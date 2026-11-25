@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:wheat_seeds",
+    "minecraft:pumpkin_seeds",
+    "minecraft:melon_seeds"
+  ],
+  "result": {
+    "id": "parapet:bird_feed",
+    "count": 4
+  }
+}

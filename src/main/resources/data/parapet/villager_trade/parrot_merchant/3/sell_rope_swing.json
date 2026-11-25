@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 8
+  },
+  "gives": {
+    "id": "parapet:rope_swing"
+  },
+  "xp": 10,
+  "max_uses": 6,
+  "reputation_discount": 0.05
+}

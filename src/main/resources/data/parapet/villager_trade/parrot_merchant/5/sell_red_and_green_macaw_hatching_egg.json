@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 40
+  },
+  "gives": {
+    "id": "parapet:red_and_green_macaw_hatching_egg"
+  },
+  "xp": 20,
+  "max_uses": 1,
+  "reputation_discount": 0.05
+}

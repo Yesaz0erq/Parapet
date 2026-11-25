@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "parapet:bird_feed",
+    "minecraft:sweet_berries",
+    "minecraft:apple"
+  ],
+  "result": {
+    "id": "parapet:premium_bird_feed",
+    "count": 2
+  }
+}

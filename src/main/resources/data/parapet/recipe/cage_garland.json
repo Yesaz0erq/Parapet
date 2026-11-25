@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:string",
+    "#minecraft:leaves",
+    "#minecraft:flowers"
+  ],
+  "result": {
+    "id": "parapet:cage_garland",
+    "count": 1
+  }
+}

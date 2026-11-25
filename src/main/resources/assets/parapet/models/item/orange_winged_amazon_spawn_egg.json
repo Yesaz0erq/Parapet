@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "parapet:item/orange_winged_amazon_spawn_egg"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 18
+  },
+  "gives": {
+    "id": "parapet:sun_conure_hatching_egg"
+  },
+  "xp": 10,
+  "max_uses": 3,
+  "reputation_discount": 0.05
+}

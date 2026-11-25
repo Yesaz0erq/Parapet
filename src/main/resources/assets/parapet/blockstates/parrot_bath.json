@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "filled=false": {
+      "model": "parapet:block/aviary/parrot_bath"
+    },
+    "filled=true": {
+      "model": "parapet:block/aviary/parrot_bath_filled"
+    }
+  }
+}

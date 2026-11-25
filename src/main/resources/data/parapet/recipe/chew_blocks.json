@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:string",
+    "#minecraft:planks",
+    "minecraft:red_dye",
+    "minecraft:yellow_dye"
+  ],
+  "result": {
+    "id": "parapet:chew_blocks",
+    "count": 1
+  }
+}

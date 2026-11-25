@@ -1,0 +1,412 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "part": "base",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/base_frame",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/base_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/base_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/base_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "back"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "rear"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "right",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/right_frame",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "part": "right",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/right_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "right",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/right_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "right",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/right_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "back_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "rear_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "far_right",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/far_right_frame",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "part": "far_right",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/far_right_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "far_right",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/far_right_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "far_right",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/far_right_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "back_far_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "rear_far_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "upper",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_frame",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "part": "upper",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "upper",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "upper",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "upper_back"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "upper_rear"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "upper_right",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_right_frame",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "part": "upper_right",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_right_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "upper_right",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_right_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "upper_right",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_right_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "upper_back_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "upper_rear_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "upper_far_right",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_far_right_frame",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "part": "upper_far_right",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_far_right_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "upper_far_right",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_far_right_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "upper_far_right",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/large_parrot_play_stand/upper_far_right_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "upper_back_far_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "upper_rear_far_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "top"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "top_back"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "top_rear"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "top_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "top_back_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "top_rear_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "top_far_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "top_back_far_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    },
+    {
+      "when": {
+        "part": "top_rear_far_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    }
+  ]
+}

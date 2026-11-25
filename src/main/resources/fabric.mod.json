@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "parapet",
+  "version": "${version}",
+  "name": "parapet",
+  "description": "Keep a field guide of parrots from the Overworld, earn their trust, teach them new interactions, and raise your flock in decorated aviaries.",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.parapet.Parapet"
+    ],
+    "client": [
+      "dev.parapet.client.ParapetClient"
+    ],
+    "jei_mod_plugin": [
+      "dev.parapet.client.jei.ParapetJeiPlugin"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.20.1",
+    "minecraft": "26.3",
+    "java": ">=25",
+    "fabric-api": ">=0.167.0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 14
+  },
+  "gives": {
+    "id": "parapet:eastern_rosella_hatching_egg"
+  },
+  "xp": 5,
+  "max_uses": 3,
+  "reputation_discount": 0.05
+}

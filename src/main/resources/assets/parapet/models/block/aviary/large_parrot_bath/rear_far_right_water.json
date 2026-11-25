@@ -1,0 +1,78 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "water": "parapet:block/aviary/water",
+    "particle": "parapet:block/aviary/water"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        5.36,
+        0
+      ],
+      "to": [
+        12.34,
+        5.48,
+        12.34
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            7,
+            15.34,
+            7.12
+          ],
+          "texture": "#water"
+        },
+        "east": {
+          "uv": [
+            0,
+            1,
+            12.34,
+            1.12
+          ],
+          "texture": "#water"
+        },
+        "south": {
+          "uv": [
+            3,
+            7,
+            15.34,
+            7.12
+          ],
+          "texture": "#water"
+        },
+        "west": {
+          "uv": [
+            0,
+            1,
+            12.34,
+            1.12
+          ],
+          "texture": "#water"
+        },
+        "up": {
+          "uv": [
+            2,
+            1,
+            14.34,
+            13.34
+          ],
+          "texture": "#water"
+        },
+        "down": {
+          "uv": [
+            2,
+            1,
+            14.34,
+            13.34
+          ],
+          "texture": "#water"
+        }
+      }
+    }
+  ]
+}

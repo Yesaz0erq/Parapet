@@ -1,0 +1,147 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "perch_bark": "parapet:block/aviary/perch_bark",
+    "twine": "parapet:block/aviary/twine",
+    "particle": "parapet:block/aviary/perch_bark"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        9.8,
+        6.4
+      ],
+      "to": [
+        16,
+        12,
+        9.6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            9,
+            16,
+            11.2
+          ],
+          "texture": "#perch_bark"
+        },
+        "east": {
+          "uv": [
+            4,
+            12,
+            7.2,
+            14.2
+          ],
+          "texture": "#perch_bark"
+        },
+        "south": {
+          "uv": [
+            0,
+            9,
+            16,
+            11.2
+          ],
+          "texture": "#perch_bark"
+        },
+        "west": {
+          "uv": [
+            4,
+            12,
+            7.2,
+            14.2
+          ],
+          "texture": "#perch_bark"
+        },
+        "up": {
+          "uv": [
+            0,
+            9,
+            16,
+            12.2
+          ],
+          "texture": "#perch_bark"
+        },
+        "down": {
+          "uv": [
+            0,
+            9,
+            16,
+            12.2
+          ],
+          "texture": "#perch_bark"
+        }
+      }
+    },
+    {
+      "from": [
+        4.4,
+        9.73,
+        6.29
+      ],
+      "to": [
+        11.6,
+        11.99,
+        9.71
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            2,
+            8.2,
+            4.26
+          ],
+          "texture": "#twine"
+        },
+        "east": {
+          "uv": [
+            6,
+            5,
+            9.42,
+            7.26
+          ],
+          "texture": "#twine"
+        },
+        "south": {
+          "uv": [
+            1,
+            2,
+            8.2,
+            4.26
+          ],
+          "texture": "#twine"
+        },
+        "west": {
+          "uv": [
+            6,
+            5,
+            9.42,
+            7.26
+          ],
+          "texture": "#twine"
+        },
+        "up": {
+          "uv": [
+            1,
+            2,
+            8.2,
+            5.42
+          ],
+          "texture": "#twine"
+        },
+        "down": {
+          "uv": [
+            1,
+            2,
+            8.2,
+            5.42
+          ],
+          "texture": "#twine"
+        }
+      }
+    }
+  ]
+}

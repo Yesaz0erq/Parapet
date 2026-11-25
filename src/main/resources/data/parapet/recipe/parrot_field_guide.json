@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:book",
+    "minecraft:feather",
+    "minecraft:wheat_seeds"
+  ],
+  "result": {
+    "id": "parapet:parrot_field_guide",
+    "count": 1
+  }
+}

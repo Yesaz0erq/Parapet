@@ -1,0 +1,223 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "part": "base",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_frame"
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_frame",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_frame",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_frame",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "north",
+        "open": "false"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_closed"
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "east",
+        "open": "false"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_closed",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "south",
+        "open": "false"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_closed",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "west",
+        "open": "false"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_closed",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "north",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_open"
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "east",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "south",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "west",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_open",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "north",
+        "garland": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_garland"
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "east",
+        "garland": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_garland",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "south",
+        "garland": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_garland",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "west",
+        "garland": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_garland",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "north",
+        "bell": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_bell"
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "east",
+        "bell": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_bell",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "south",
+        "bell": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_bell",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "base",
+        "facing": "west",
+        "bell": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/parrot_cage/base_bell",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "back|back_far_right|back_right|far_right|rear|rear_far_right|rear_right|right|top|top_back|top_back_far_right|top_back_right|top_far_right|top_rear|top_rear_far_right|top_rear_right|top_right|upper|upper_back|upper_back_far_right|upper_back_right|upper_far_right|upper_rear|upper_rear_far_right|upper_rear_right|upper_right"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/empty"
+      }
+    }
+  ]
+}

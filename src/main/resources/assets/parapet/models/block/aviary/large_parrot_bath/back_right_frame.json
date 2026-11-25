@@ -1,0 +1,147 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "glaze": "parapet:block/aviary/glaze",
+    "red_clay": "parapet:block/aviary/red_clay",
+    "particle": "parapet:block/aviary/red_clay"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        1.9,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            1,
+            16,
+            2.9
+          ],
+          "texture": "#red_clay"
+        },
+        "east": {
+          "uv": [
+            0,
+            2,
+            16,
+            3.9
+          ],
+          "texture": "#red_clay"
+        },
+        "south": {
+          "uv": [
+            0,
+            1,
+            16,
+            2.9
+          ],
+          "texture": "#red_clay"
+        },
+        "west": {
+          "uv": [
+            0,
+            2,
+            16,
+            3.9
+          ],
+          "texture": "#red_clay"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#red_clay"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#red_clay"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        1.9,
+        0
+      ],
+      "to": [
+        16,
+        3,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            4,
+            16,
+            5.1
+          ],
+          "texture": "#glaze"
+        },
+        "east": {
+          "uv": [
+            0,
+            13,
+            16,
+            14.1
+          ],
+          "texture": "#glaze"
+        },
+        "south": {
+          "uv": [
+            0,
+            4,
+            16,
+            5.1
+          ],
+          "texture": "#glaze"
+        },
+        "west": {
+          "uv": [
+            0,
+            13,
+            16,
+            14.1
+          ],
+          "texture": "#glaze"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#glaze"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#glaze"
+        }
+      }
+    }
+  ]
+}

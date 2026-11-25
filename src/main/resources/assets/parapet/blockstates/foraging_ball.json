@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "parapet:block/aviary/foraging_ball"
+    },
+    "active=true": {
+      "model": "parapet:block/aviary/foraging_ball_active"
+    }
+  }
+}

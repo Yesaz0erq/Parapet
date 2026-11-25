@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:string",
+    "minecraft:wheat",
+    "minecraft:wheat_seeds"
+  ],
+  "result": {
+    "id": "parapet:foraging_ball",
+    "count": 1
+  }
+}

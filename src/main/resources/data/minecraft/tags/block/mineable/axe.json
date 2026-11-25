@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "parapet:cage_workbench",
+    "parapet:parrot_play_stand",
+    "parapet:large_parrot_play_stand",
+    "parapet:rope_swing",
+    "parapet:foraging_ball",
+    "parapet:chew_blocks"
+  ]
+}

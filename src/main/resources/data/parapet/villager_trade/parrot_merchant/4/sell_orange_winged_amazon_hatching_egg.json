@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 28
+  },
+  "gives": {
+    "id": "parapet:orange_winged_amazon_hatching_egg"
+  },
+  "xp": 15,
+  "max_uses": 2,
+  "reputation_discount": 0.05
+}

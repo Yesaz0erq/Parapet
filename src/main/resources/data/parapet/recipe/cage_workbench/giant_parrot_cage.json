@@ -1,0 +1,10 @@
+{
+  "type": "parapet:cage_workbench",
+  "base": "parapet:super_deluxe_parrot_cage",
+  "material": "minecraft:iron_bars",
+  "material_count": 24,
+  "fitting": "minecraft:iron_ingot",
+  "fitting_count": 8,
+  "order": 4,
+  "result": "parapet:giant_parrot_cage"
+}

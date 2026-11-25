@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LLL",
+    "STS",
+    "PPP"
+  ],
+  "key": {
+    "L": "#minecraft:logs",
+    "S": "minecraft:string",
+    "T": "parapet:parrot_play_stand",
+    "P": "#minecraft:planks"
+  },
+  "result": {
+    "id": "parapet:large_parrot_play_stand",
+    "count": 1
+  }
+}

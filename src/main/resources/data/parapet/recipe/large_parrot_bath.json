@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "B B",
+    "BPB",
+    "TTT"
+  ],
+  "key": {
+    "B": "minecraft:brick",
+    "P": "parapet:parrot_bath",
+    "T": "minecraft:terracotta"
+  },
+  "result": {
+    "id": "parapet:large_parrot_bath",
+    "count": 1
+  }
+}

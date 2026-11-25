@@ -1,0 +1,147 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "perch_bark": "parapet:block/aviary/perch_bark",
+    "walnut": "parapet:block/aviary/walnut",
+    "particle": "parapet:block/aviary/walnut"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0.69,
+        0
+      ],
+      "to": [
+        16,
+        2,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            5,
+            16,
+            6.31
+          ],
+          "texture": "#walnut"
+        },
+        "east": {
+          "uv": [
+            0,
+            2,
+            16,
+            3.31
+          ],
+          "texture": "#walnut"
+        },
+        "south": {
+          "uv": [
+            0,
+            5,
+            16,
+            6.31
+          ],
+          "texture": "#walnut"
+        },
+        "west": {
+          "uv": [
+            0,
+            2,
+            16,
+            3.31
+          ],
+          "texture": "#walnut"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#walnut"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#walnut"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        11,
+        7.44
+      ],
+      "to": [
+        16,
+        12,
+        8.56
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            2,
+            16,
+            3
+          ],
+          "texture": "#perch_bark"
+        },
+        "east": {
+          "uv": [
+            13,
+            0,
+            14.12,
+            1
+          ],
+          "texture": "#perch_bark"
+        },
+        "south": {
+          "uv": [
+            0,
+            2,
+            16,
+            3
+          ],
+          "texture": "#perch_bark"
+        },
+        "west": {
+          "uv": [
+            13,
+            0,
+            14.12,
+            1
+          ],
+          "texture": "#perch_bark"
+        },
+        "up": {
+          "uv": [
+            0,
+            7,
+            16,
+            8.12
+          ],
+          "texture": "#perch_bark"
+        },
+        "down": {
+          "uv": [
+            0,
+            7,
+            16,
+            8.12
+          ],
+          "texture": "#perch_bark"
+        }
+      }
+    }
+  ]
+}

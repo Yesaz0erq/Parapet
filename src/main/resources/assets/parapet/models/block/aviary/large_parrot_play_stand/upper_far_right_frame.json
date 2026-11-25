@@ -1,0 +1,219 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "perch_bark": "parapet:block/aviary/perch_bark",
+    "twine": "parapet:block/aviary/twine",
+    "particle": "parapet:block/aviary/perch_bark"
+  },
+  "elements": [
+    {
+      "from": [
+        2.5,
+        0,
+        6.55
+      ],
+      "to": [
+        5.8,
+        10.8,
+        9.65
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            10,
+            12.8,
+            13.3
+          ],
+          "texture": "#perch_bark",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            0,
+            4,
+            10.8,
+            7.1
+          ],
+          "texture": "#perch_bark",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            2,
+            10,
+            12.8,
+            13.3
+          ],
+          "texture": "#perch_bark",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            0,
+            4,
+            10.8,
+            7.1
+          ],
+          "texture": "#perch_bark",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            3.1
+          ],
+          "texture": "#perch_bark"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            3.1
+          ],
+          "texture": "#perch_bark"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        9.8,
+        6.4
+      ],
+      "to": [
+        14.5,
+        12,
+        9.6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            7,
+            15.5,
+            9.2
+          ],
+          "texture": "#perch_bark"
+        },
+        "east": {
+          "uv": [
+            6,
+            12,
+            9.2,
+            14.2
+          ],
+          "texture": "#perch_bark"
+        },
+        "south": {
+          "uv": [
+            1,
+            7,
+            15.5,
+            9.2
+          ],
+          "texture": "#perch_bark"
+        },
+        "west": {
+          "uv": [
+            6,
+            12,
+            9.2,
+            14.2
+          ],
+          "texture": "#perch_bark"
+        },
+        "up": {
+          "uv": [
+            1,
+            5,
+            15.5,
+            8.2
+          ],
+          "texture": "#perch_bark"
+        },
+        "down": {
+          "uv": [
+            1,
+            5,
+            15.5,
+            8.2
+          ],
+          "texture": "#perch_bark"
+        }
+      }
+    },
+    {
+      "from": [
+        2.28,
+        6.6,
+        6.34
+      ],
+      "to": [
+        5.99,
+        7.86,
+        9.86
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10,
+            9,
+            13.71,
+            10.26
+          ],
+          "texture": "#twine"
+        },
+        "east": {
+          "uv": [
+            10,
+            1,
+            13.52,
+            2.26
+          ],
+          "texture": "#twine"
+        },
+        "south": {
+          "uv": [
+            10,
+            9,
+            13.71,
+            10.26
+          ],
+          "texture": "#twine"
+        },
+        "west": {
+          "uv": [
+            10,
+            1,
+            13.52,
+            2.26
+          ],
+          "texture": "#twine"
+        },
+        "up": {
+          "uv": [
+            6,
+            3,
+            9.71,
+            6.52
+          ],
+          "texture": "#twine"
+        },
+        "down": {
+          "uv": [
+            6,
+            3,
+            9.71,
+            6.52
+          ],
+          "texture": "#twine"
+        }
+      }
+    }
+  ]
+}

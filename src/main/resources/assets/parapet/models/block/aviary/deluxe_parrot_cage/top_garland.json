@@ -1,0 +1,352 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "berry": "parapet:block/aviary/berry",
+    "leaf": "parapet:block/aviary/leaf",
+    "twine": "parapet:block/aviary/twine",
+    "particle": "parapet:block/aviary/berry"
+  },
+  "elements": [
+    {
+      "from": [
+        2.1,
+        14.21,
+        0.56
+      ],
+      "to": [
+        9.42,
+        14.65,
+        0.96
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            5,
+            7.32,
+            5.44
+          ],
+          "texture": "#twine"
+        },
+        "east": {
+          "uv": [
+            5,
+            13,
+            5.4,
+            13.44
+          ],
+          "texture": "#twine"
+        },
+        "south": {
+          "uv": [
+            0,
+            5,
+            7.32,
+            5.44
+          ],
+          "texture": "#twine"
+        },
+        "west": {
+          "uv": [
+            5,
+            13,
+            5.4,
+            13.44
+          ],
+          "texture": "#twine"
+        },
+        "up": {
+          "uv": [
+            2,
+            12,
+            9.32,
+            12.4
+          ],
+          "texture": "#twine"
+        },
+        "down": {
+          "uv": [
+            2,
+            12,
+            9.32,
+            12.4
+          ],
+          "texture": "#twine"
+        }
+      }
+    },
+    {
+      "from": [
+        9.4,
+        13.85,
+        0.56
+      ],
+      "to": [
+        16,
+        14.29,
+        0.96
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            7,
+            9.6,
+            7.44
+          ],
+          "texture": "#twine"
+        },
+        "east": {
+          "uv": [
+            10,
+            1,
+            10.4,
+            1.44
+          ],
+          "texture": "#twine"
+        },
+        "south": {
+          "uv": [
+            3,
+            7,
+            9.6,
+            7.44
+          ],
+          "texture": "#twine"
+        },
+        "west": {
+          "uv": [
+            10,
+            1,
+            10.4,
+            1.44
+          ],
+          "texture": "#twine"
+        },
+        "up": {
+          "uv": [
+            2,
+            6,
+            8.6,
+            6.4
+          ],
+          "texture": "#twine"
+        },
+        "down": {
+          "uv": [
+            2,
+            6,
+            8.6,
+            6.4
+          ],
+          "texture": "#twine"
+        }
+      }
+    },
+    {
+      "from": [
+        3.79,
+        12.94,
+        0.21
+      ],
+      "to": [
+        4.91,
+        14.25,
+        0.93
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            1,
+            4.12,
+            2.31
+          ],
+          "texture": "#leaf"
+        },
+        "east": {
+          "uv": [
+            3,
+            6,
+            3.72,
+            7.31
+          ],
+          "texture": "#leaf"
+        },
+        "south": {
+          "uv": [
+            3,
+            1,
+            4.12,
+            2.31
+          ],
+          "texture": "#leaf"
+        },
+        "west": {
+          "uv": [
+            3,
+            6,
+            3.72,
+            7.31
+          ],
+          "texture": "#leaf"
+        },
+        "up": {
+          "uv": [
+            5,
+            14,
+            6.12,
+            14.72
+          ],
+          "texture": "#leaf"
+        },
+        "down": {
+          "uv": [
+            5,
+            14,
+            6.12,
+            14.72
+          ],
+          "texture": "#leaf"
+        }
+      }
+    },
+    {
+      "from": [
+        10.047,
+        12.45,
+        0.21
+      ],
+      "to": [
+        11.167,
+        13.76,
+        0.93
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7,
+            3,
+            8.12,
+            4.31
+          ],
+          "texture": "#leaf"
+        },
+        "east": {
+          "uv": [
+            9,
+            8,
+            9.72,
+            9.31
+          ],
+          "texture": "#leaf"
+        },
+        "south": {
+          "uv": [
+            7,
+            3,
+            8.12,
+            4.31
+          ],
+          "texture": "#leaf"
+        },
+        "west": {
+          "uv": [
+            9,
+            8,
+            9.72,
+            9.31
+          ],
+          "texture": "#leaf"
+        },
+        "up": {
+          "uv": [
+            0,
+            10,
+            1.12,
+            10.72
+          ],
+          "texture": "#leaf"
+        },
+        "down": {
+          "uv": [
+            0,
+            10,
+            1.12,
+            10.72
+          ],
+          "texture": "#leaf"
+        }
+      }
+    },
+    {
+      "from": [
+        4.52,
+        12.53,
+        0.06
+      ],
+      "to": [
+        5.29,
+        13.39,
+        0.82
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            1,
+            2.77,
+            1.86
+          ],
+          "texture": "#berry"
+        },
+        "east": {
+          "uv": [
+            1,
+            7,
+            1.76,
+            7.86
+          ],
+          "texture": "#berry"
+        },
+        "south": {
+          "uv": [
+            2,
+            1,
+            2.77,
+            1.86
+          ],
+          "texture": "#berry"
+        },
+        "west": {
+          "uv": [
+            1,
+            7,
+            1.76,
+            7.86
+          ],
+          "texture": "#berry"
+        },
+        "up": {
+          "uv": [
+            10,
+            3,
+            10.77,
+            3.76
+          ],
+          "texture": "#berry"
+        },
+        "down": {
+          "uv": [
+            10,
+            3,
+            10.77,
+            3.76
+          ],
+          "texture": "#berry"
+        }
+      }
+    }
+  ]
+}

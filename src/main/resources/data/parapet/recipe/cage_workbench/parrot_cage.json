@@ -1,0 +1,11 @@
+{
+  "type": "parapet:cage_workbench",
+  "base": "#minecraft:planks",
+  "base_count": 4,
+  "material": "minecraft:iron_bars",
+  "material_count": 6,
+  "fitting": "minecraft:stick",
+  "fitting_count": 2,
+  "order": 0,
+  "result": "parapet:parrot_cage"
+}
