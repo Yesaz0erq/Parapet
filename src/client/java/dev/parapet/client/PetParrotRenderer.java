@@ -2,6 +2,9 @@ package dev.parapet.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.parapet.Parapet;
+import dev.parapet.block.ParrotCageBlock;
+import dev.parapet.cage.CageMeal;
+import dev.parapet.entity.ParrotEcology;
 import dev.parapet.entity.PetParrotEntity;
 import dev.parapet.entity.PetParrotActivity;
 import java.util.HashMap;
@@ -36,6 +39,10 @@ final class PetParrotRenderer<T extends PetParrotEntity> extends MobRenderer<T, 
         float bank;
         float individualPhase;
         float wingTempo;
+        ParrotCageBlock.Size cage;
+        CageBirdMotion cageMotion;
+        CageMeal cageMeal;
+        float speciesScale = 1F;
     }
 
     PetParrotRenderer(EntityRendererProvider.Context context, ModelLayerLocation layer, String species,
@@ -76,14 +83,26 @@ final class PetParrotRenderer<T extends PetParrotEntity> extends MobRenderer<T, 
         state.outgoingPosture = PetParrotActivity.IDLE;
         state.outgoingTicks = 0F;
         state.outgoingWeight = 0F;
+        state.cage = entity.getCageSize();
+        if (state.cage != null) {
+            state.speciesScale = modelScale;
+            state.cageMotion = CageBirdMotion.forSpecies(ParrotEcology.forBird(entity));
+            state.cageMeal = entity.getCageMeal();
+            transitions.remove(individual);
+            return;
+        }
         PostureTransition transition = transitions.get(individual);
-        if (transition == null && state.activity.isNaturalDetail()) {
+        if (transition == null && hasRelease(state.activity)) {
             transition = new PostureTransition();
             transitions.put(individual, transition);
         }
         if (transition != null && !transition.sample(state)) {
             transitions.remove(individual);
         }
+    }
+
+    private static boolean hasRelease(PetParrotActivity activity) {
+        return activity == PetParrotActivity.BATHE || activity == PetParrotActivity.DRINK || activity.isNaturalDetail();
     }
 
     /** Keep a short release when a bird wakes, takes off or is interrupted halfway through a gesture. */
@@ -96,7 +115,7 @@ final class PetParrotRenderer<T extends PetParrotEntity> extends MobRenderer<T, 
             float gap = state.ageInTicks - previousAge;
             if (gap < 0F || gap >= 8F) {
                 releasing = PetParrotActivity.IDLE;
-            } else if (previous != state.activity && previous.isNaturalDetail()) {
+            } else if (previous != state.activity && hasRelease(previous)) {
                 releasing = previous;
                 changedAt = state.ageInTicks;
                 releasedTicks = previousTicks;
@@ -115,7 +134,7 @@ final class PetParrotRenderer<T extends PetParrotEntity> extends MobRenderer<T, 
             previous = state.activity;
             previousAge = state.ageInTicks;
             previousTicks = state.activityTicks;
-            return previous.isNaturalDetail() || releasing != PetParrotActivity.IDLE;
+            return hasRelease(previous) || releasing != PetParrotActivity.IDLE;
         }
     }
 

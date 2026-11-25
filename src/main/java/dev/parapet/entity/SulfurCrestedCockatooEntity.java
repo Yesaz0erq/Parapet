@@ -35,7 +35,7 @@ public final class SulfurCrestedCockatooEntity extends PetParrotEntity {
         double distance = distanceToSqr(observer);
         // Enter at 3 blocks; crossing back and forth over that distance alone does not retrigger the crest.
         boolean close = distance <= 9.0 || sameObserver && observerWasClose && distance <= 16.0;
-        boolean hasFood = observer.isHolding(this::acceptsFood);
+        boolean hasFood = observer.isHolding(this::isOfferedFood);
         if ((close && (!sameObserver || !observerWasClose)) || (hasFood && (!sameObserver || !observerHadFood))) {
             tryStartDisplay(PetParrotActivity.RAISE_CREST, observer, 240);
         }

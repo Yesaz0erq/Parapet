@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:calcite",
+    "minecraft:string",
+    "parapet:bamboo_beads"
+  ],
+  "result": {
+    "id": "parapet:mineral_chew_charm",
+    "count": 1
+  }
+}

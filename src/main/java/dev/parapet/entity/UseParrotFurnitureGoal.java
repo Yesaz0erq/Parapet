@@ -4,6 +4,7 @@ import dev.parapet.block.LargeAviaryFixtureBlock;
 import dev.parapet.block.ParrotBathBlock;
 import dev.parapet.block.ParrotPlayStandBlock;
 import dev.parapet.block.ParrotToyBlock;
+import dev.parapet.block.ParrotWaterBowlBlock;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
@@ -12,17 +13,20 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /** A free-roaming pet picks a reachable perch, pool or plaything and lands before using it. */
 final class UseParrotFurnitureGoal extends Goal {
     private enum Use {
-        PERCH, BATHE, BALL, SWING, CHEW;
+        PERCH, BATHE, BALL, SWING, CHEW, DRINK;
         PetParrotActivity activity() {
             return switch (this) {
                 case BATHE -> PetParrotActivity.BATHE;
+                case DRINK -> PetParrotActivity.DRINK;
                 case BALL, CHEW -> PetParrotActivity.FORAGE;
                 default -> PetParrotActivity.IDLE;
             };
@@ -52,6 +56,8 @@ final class UseParrotFurnitureGoal extends Goal {
             use = Use.BATHE;
             height = ParrotBathBlock.footHeight(bird.getBbWidth());
             preferred = small;
+        } else if (state.getBlock() instanceof ParrotWaterBowlBlock && state.getValue(ParrotWaterBowlBlock.FILLED)) {
+            return drinkSite(pos);
         } else if (state.getBlock() instanceof ParrotPlayStandBlock) {
             use = Use.PERCH;
             height = 1;
@@ -72,6 +78,28 @@ final class UseParrotFurnitureGoal extends Goal {
             return null;
         }
         return new Site(pos.immutable(), use, Vec3.atBottomCenterOf(pos).add(0, height, 0), preferred);
+    }
+
+    private Site drinkSite(BlockPos bowl) {
+        Vec3 center = Vec3.atBottomCenterOf(bowl);
+        Vec3 offset = bird.position().subtract(center).horizontal();
+        Direction side = offset.lengthSqr() > 0.001 ? Direction.getApproximateNearest(offset) : Direction.NORTH;
+        double distance = 5.0 / 16 + bird.getBbWidth() * 0.5 + 0.04;
+        for (int i = 0; i < 4; i++, side = side.getClockWise()) {
+            Vec3 feet = center.relative(side, distance);
+            BlockPos support = BlockPos.containing(feet).below();
+            if (bird.level().getBlockState(support).isFaceSturdy(bird.level(), support, Direction.UP)
+                    && hasSpace(feet) && canReachWater(feet.add(0, bird.getEyeHeight(), 0), bowl)) {
+                return new Site(bowl.immutable(), Use.DRINK, feet, false);
+            }
+        }
+        return null;
+    }
+
+    private boolean canReachWater(Vec3 eye, BlockPos bowl) {
+        Vec3 water = Vec3.atBottomCenterOf(bowl).add(0, 3.3 / 16, 0);
+        var hit = bird.level().clip(new ClipContext(eye, water, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, bird));
+        return hit.getType() == HitResult.Type.MISS || hit.getBlockPos().equals(bowl);
     }
 
     @Override
@@ -112,10 +140,14 @@ final class UseParrotFurnitureGoal extends Goal {
     public boolean canContinueToUse() {
         if (target == null || bird.tickCount >= until || !bird.canUseFurniture() || !bird.level().hasChunkAt(target.pos())) return false;
         BlockState state = bird.level().getBlockState(target.pos());
+        if (bird.getActivity() != (settled ? target.use().activity() : PetParrotActivity.IDLE)
+                || settled && bird.distanceToSqr(target.feet()) >= 0.20) return false;
+        if (target.use() == Use.DRINK) {
+            return state.getBlock() instanceof ParrotWaterBowlBlock && state.getValue(ParrotWaterBowlBlock.FILLED)
+                && (!settled || bird.onGround() && canReachWater(bird.getEyePosition(), target.pos()));
+        }
         Site current = site(target.pos(), state, ParrotEcology.forBird(bird).size() == ParrotEcology.Size.SMALL);
-        return current != null && current.use() == target.use()
-            && bird.getActivity() == (settled ? target.use().activity() : PetParrotActivity.IDLE)
-            && (!settled || bird.distanceToSqr(target.feet()) < 0.20);
+        return current != null && current.use() == target.use();
     }
 
     @Override
@@ -134,14 +166,32 @@ final class UseParrotFurnitureGoal extends Goal {
         }
     }
 
+    /** The wing hits occur at different points in each 72-tick bathing clip. */
+    private void splash(ServerLevel level, Vec3 feet) {
+        int tick = (int) bird.getActivityTicks(0F);
+        int drops = switch (ParrotEcology.forBird(bird).size()) {
+            case SMALL -> switch (tick) { case 15, 21, 32, 39, 50, 55 -> 4; default -> 0; };
+            case MEDIUM -> switch (tick) { case 20, 34, 47, 55 -> 7; default -> 0; };
+            case LARGE -> switch (tick) { case 25, 45, 56 -> 11; default -> 0; };
+        };
+        if (drops == 0) return;
+        double basinRadius = level.getBlockState(target.pos()).getBlock() instanceof ParrotBathBlock ? 0.21 : 0.62;
+        double spread = Math.min(basinRadius, bird.getBbWidth() * 0.4);
+        level.sendParticles(ParticleTypes.SPLASH, feet.x, feet.y + 0.13, feet.z,
+            drops, spread, 0.05, spread, 0.018 + 0.002 * drops);
+    }
+
     @Override
     public void tick() {
         if (target == null) return;
         Vec3 landing = target.feet();
         if (settled) {
             if (bird.level() instanceof ServerLevel level) {
-                if (target.use() == Use.BATHE && bird.tickCount % 7 == 0)
-                    level.sendParticles(ParticleTypes.SPLASH, landing.x, landing.y + 0.12, landing.z, 7, 0.25, 0.07, 0.25, 0.025);
+                if (target.use() == Use.BATHE) splash(level, landing);
+                if (target.use() == Use.DRINK) {
+                    int tick = (int) bird.getActivityTicks(0F);
+                    if (tick == 12 || tick == 25) bird.playSound(SoundEvents.GENERIC_DRINK.value(), 0.16F, 1.6F);
+                }
                 if (bird.tickCount % 13 == 0) play(level);
             }
             return;
@@ -158,6 +208,13 @@ final class UseParrotFurnitureGoal extends Goal {
             bird.setOnGround(true);
             settled = true;
             PetParrotActivity activity = target.use().activity();
+            if (target.use() == Use.DRINK) {
+                Vec3 towardsBowl = Vec3.atBottomCenterOf(target.pos()).subtract(landing);
+                float yaw = (float) Math.toDegrees(Math.atan2(-towardsBowl.x, towardsBowl.z));
+                bird.setYRot(yaw);
+                bird.setYBodyRot(yaw);
+                bird.setYHeadRot(yaw);
+            }
             bird.setActivity(activity);
             if (target.use() == Use.BATHE) bird.playSound(SoundEvents.GENERIC_SPLASH, 0.45F, 1.35F);
             if (bird.level() instanceof ServerLevel level) play(level);

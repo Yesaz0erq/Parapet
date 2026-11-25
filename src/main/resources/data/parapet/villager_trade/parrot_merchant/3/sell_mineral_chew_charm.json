@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 6
+  },
+  "gives": {
+    "id": "parapet:mineral_chew_charm"
+  },
+  "xp": 10,
+  "max_uses": 6,
+  "reputation_discount": 0.05
+}

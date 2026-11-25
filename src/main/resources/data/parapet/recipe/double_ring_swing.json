@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "parapet:vine_ring",
+    "parapet:vine_ring",
+    "minecraft:string",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "parapet:double_ring_swing",
+    "count": 1
+  }
+}

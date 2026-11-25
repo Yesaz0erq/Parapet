@@ -38,7 +38,8 @@ final class ParrotClips {
     }
 
     final KeyframeAnimation idle, forage, preen, greet, flap, glide, beg, crestDisplay;
-    final KeyframeAnimation nightRoost, ruffle, listen, contactCall;
+    final KeyframeAnimation nightRoost, ruffle, listen, contactCall, bathe;
+    final KeyframeAnimation cageIdle, cageFeed, drink;
 
     ParrotClips(ModelPart root, Size size, String species) {
         idle = size.definitions.get("idle").bake(root);
@@ -54,6 +55,10 @@ final class ParrotClips {
         ruffle = size.definitions.get("ruffle").bake(root);
         listen = size.definitions.get("listen").bake(root);
         contactCall = size.definitions.get("contact_call").bake(root);
+        bathe = size.definitions.get("bathe").bake(root);
+        cageIdle = size.definitions.get("cage_idle").bake(root);
+        cageFeed = size.definitions.get("cage_feed").bake(root);
+        drink = size.definitions.get("drink").bake(root);
         beg = species.equals("monk_parakeet") ? SPECIES_ACTIONS.get("monk_beg").bake(root) : null;
         crestDisplay = species.equals("sulfur_crested_cockatoo") ? SPECIES_ACTIONS.get("cockatoo_display").bake(root) : null;
     }

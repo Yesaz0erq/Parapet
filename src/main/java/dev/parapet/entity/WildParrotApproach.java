@@ -31,10 +31,10 @@ final class WildParrotApproach extends Goal {
         }
 
         static Lure of(PetParrotEntity bird, ItemStack stack) {
-            if (stack.is(ParapetFurniture.PREMIUM_BIRD_FEED)) {
+            if (ParapetFurniture.isPremiumFeed(stack)) {
                 return PREMIUM;
             }
-            if (stack.is(ParapetFurniture.BIRD_FEED)) {
+            if (ParapetFurniture.isBirdFeed(stack)) {
                 return FEED;
             }
             return !stack.isEmpty() && ParrotEcology.forBird(bird).acceptsTamingItem(stack) ? SPECIES_ITEM : NONE;

@@ -1,0 +1,21 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": [
+          "gui"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "parapet:item/beak_rubbing_perch"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "parapet:item/aviary/beak_rubbing_perch"
+    }
+  }
+}

@@ -2,9 +2,10 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "glaze": "parapet:block/aviary/glaze",
-    "red_clay": "parapet:block/aviary/red_clay",
-    "particle": "parapet:block/aviary/red_clay"
+    "bath_celadon": "parapet:block/aviary/bath_celadon",
+    "bath_terracotta": "parapet:block/aviary/bath_terracotta",
+    "ivory": "parapet:block/aviary/ivory",
+    "particle": "parapet:block/aviary/bath_terracotta"
   },
   "elements": [
     {
@@ -26,7 +27,7 @@
             16,
             5.9
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "east": {
           "uv": [
@@ -35,7 +36,7 @@
             16,
             1.9
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "south": {
           "uv": [
@@ -44,7 +45,7 @@
             16,
             5.9
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "west": {
           "uv": [
@@ -53,7 +54,7 @@
             16,
             1.9
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "up": {
           "uv": [
@@ -62,7 +63,7 @@
             16,
             16
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "down": {
           "uv": [
@@ -71,7 +72,7 @@
             16,
             16
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         }
       }
     },
@@ -94,7 +95,7 @@
             16,
             6.35
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "east": {
           "uv": [
@@ -103,7 +104,7 @@
             14.85,
             9.35
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "south": {
           "uv": [
@@ -112,7 +113,7 @@
             16,
             6.35
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "west": {
           "uv": [
@@ -121,7 +122,7 @@
             14.85,
             9.35
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "up": {
           "uv": [
@@ -130,7 +131,7 @@
             16,
             2.85
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "down": {
           "uv": [
@@ -139,7 +140,7 @@
             16,
             2.85
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         }
       }
     },
@@ -162,7 +163,7 @@
             16,
             12.1
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "east": {
           "uv": [
@@ -171,7 +172,7 @@
             15.75,
             12.1
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "south": {
           "uv": [
@@ -180,7 +181,7 @@
             16,
             12.1
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "west": {
           "uv": [
@@ -189,7 +190,7 @@
             15.75,
             12.1
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "up": {
           "uv": [
@@ -198,7 +199,7 @@
             16,
             14.75
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "down": {
           "uv": [
@@ -207,7 +208,7 @@
             16,
             14.75
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         }
       }
     },
@@ -230,7 +231,7 @@
             16,
             6
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "east": {
           "uv": [
@@ -239,7 +240,7 @@
             7.37,
             16
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "south": {
           "uv": [
@@ -248,7 +249,7 @@
             16,
             6
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "west": {
           "uv": [
@@ -257,7 +258,7 @@
             7.37,
             16
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "up": {
           "uv": [
@@ -266,7 +267,7 @@
             16,
             9.37
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "down": {
           "uv": [
@@ -275,7 +276,7 @@
             16,
             9.37
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         }
       }
     },
@@ -298,7 +299,7 @@
             16,
             12.7
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "east": {
           "uv": [
@@ -307,7 +308,7 @@
             6.95,
             1.7
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "south": {
           "uv": [
@@ -316,7 +317,7 @@
             16,
             12.7
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "west": {
           "uv": [
@@ -325,7 +326,7 @@
             6.95,
             1.7
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "up": {
           "uv": [
@@ -334,7 +335,7 @@
             16,
             9.95
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "down": {
           "uv": [
@@ -343,7 +344,279 @@
             16,
             9.95
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        4.7,
+        8.65
+      ],
+      "to": [
+        16,
+        5.94,
+        12.35
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            14,
+            16,
+            15.24
+          ],
+          "texture": "#bath_terracotta"
+        },
+        "east": {
+          "uv": [
+            6,
+            9,
+            9.7,
+            10.24
+          ],
+          "texture": "#bath_terracotta"
+        },
+        "south": {
+          "uv": [
+            0,
+            4,
+            16,
+            5.24
+          ],
+          "texture": "#bath_terracotta"
+        },
+        "west": {
+          "uv": [
+            9,
+            14,
+            12.7,
+            15.24
+          ],
+          "texture": "#bath_terracotta"
+        },
+        "up": {
+          "uv": [
+            0,
+            5,
+            16,
+            8.7
+          ],
+          "texture": "#bath_terracotta"
+        },
+        "down": {
+          "uv": [
+            0,
+            10,
+            16,
+            13.7
+          ],
+          "texture": "#bath_terracotta"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        5.94,
+        8.6
+      ],
+      "to": [
+        16,
+        6.18,
+        9.46
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            12,
+            16,
+            12.24
+          ],
+          "texture": "#bath_celadon"
+        },
+        "east": {
+          "uv": [
+            13,
+            6,
+            13.86,
+            6.24
+          ],
+          "texture": "#bath_celadon"
+        },
+        "south": {
+          "uv": [
+            0,
+            1,
+            16,
+            1.24
+          ],
+          "texture": "#bath_celadon"
+        },
+        "west": {
+          "uv": [
+            0,
+            11,
+            0.86,
+            11.24
+          ],
+          "texture": "#bath_celadon"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            0.86
+          ],
+          "texture": "#bath_celadon"
+        },
+        "down": {
+          "uv": [
+            0,
+            5,
+            16,
+            5.86
+          ],
+          "texture": "#bath_celadon"
+        }
+      }
+    },
+    {
+      "from": [
+        3.7,
+        5.94,
+        10.2
+      ],
+      "to": [
+        5.15,
+        6.14,
+        11.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            11,
+            9.45,
+            11.2
+          ],
+          "texture": "#ivory"
+        },
+        "east": {
+          "uv": [
+            14,
+            5,
+            15.5,
+            5.2
+          ],
+          "texture": "#ivory"
+        },
+        "south": {
+          "uv": [
+            11,
+            0,
+            12.45,
+            0.2
+          ],
+          "texture": "#ivory"
+        },
+        "west": {
+          "uv": [
+            2,
+            10,
+            3.5,
+            10.2
+          ],
+          "texture": "#ivory"
+        },
+        "up": {
+          "uv": [
+            5,
+            1,
+            6.45,
+            2.5
+          ],
+          "texture": "#ivory"
+        },
+        "down": {
+          "uv": [
+            8,
+            6,
+            9.45,
+            7.5
+          ],
+          "texture": "#ivory"
+        }
+      }
+    },
+    {
+      "from": [
+        9.7,
+        5.94,
+        10.2
+      ],
+      "to": [
+        11.15,
+        6.14,
+        11.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10,
+            14,
+            11.45,
+            14.2
+          ],
+          "texture": "#ivory"
+        },
+        "east": {
+          "uv": [
+            1,
+            8,
+            2.5,
+            8.2
+          ],
+          "texture": "#ivory"
+        },
+        "south": {
+          "uv": [
+            13,
+            3,
+            14.45,
+            3.2
+          ],
+          "texture": "#ivory"
+        },
+        "west": {
+          "uv": [
+            4,
+            13,
+            5.5,
+            13.2
+          ],
+          "texture": "#ivory"
+        },
+        "up": {
+          "uv": [
+            7,
+            4,
+            8.45,
+            5.5
+          ],
+          "texture": "#ivory"
+        },
+        "down": {
+          "uv": [
+            10,
+            9,
+            11.45,
+            10.5
+          ],
+          "texture": "#ivory"
         }
       }
     }

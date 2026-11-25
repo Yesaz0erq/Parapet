@@ -1,0 +1,13 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 2
+  },
+  "gives": {
+    "id": "parapet:vine_ring",
+    "count": 2
+  },
+  "xp": 5,
+  "max_uses": 12,
+  "reputation_discount": 0.05
+}

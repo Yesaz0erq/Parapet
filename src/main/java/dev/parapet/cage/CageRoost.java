@@ -3,19 +3,9 @@ package dev.parapet.cage;
 import dev.parapet.Parapet;
 import dev.parapet.block.ParrotCageBlock;
 import dev.parapet.entity.AfricanGreyEntity;
-import dev.parapet.entity.BudgerigarEntity;
-import dev.parapet.entity.CaiqueEntity;
-import dev.parapet.entity.CockatielEntity;
-import dev.parapet.entity.CompanionParrotEntity;
-import dev.parapet.entity.EclectusEntity;
-import dev.parapet.entity.GreenCheekConureEntity;
-import dev.parapet.entity.LovebirdEntity;
-import dev.parapet.entity.MacawEntity;
-import dev.parapet.entity.MonkParakeetEntity;
 import dev.parapet.entity.ParrotEcology;
 import dev.parapet.entity.PetParrotActivity;
 import dev.parapet.entity.PetParrotEntity;
-import dev.parapet.entity.SulfurCrestedCockatooEntity;
 import java.util.Comparator;
 import java.util.List;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -50,6 +40,7 @@ public final class CageRoost {
     private String dimension = "";
     private String sizeName = "";
     private int bellCooldown;
+    private int provisionSeconds;
     private BlockPos breakingPart;
     private long breakTick;
 
@@ -62,6 +53,7 @@ public final class CageRoost {
             output.store("CagePerch", BlockPos.CODEC, anchor);
             output.putString("CageDimension", dimension);
             output.putString("CageSize", sizeName);
+            if (provisionSeconds > 0) output.putInt("CageProvisionSeconds", provisionSeconds);
         }
     }
 
@@ -69,6 +61,7 @@ public final class CageRoost {
         anchor = input.read("CagePerch", BlockPos.CODEC).orElse(null);
         dimension = input.getStringOr("CageDimension", "");
         sizeName = input.getStringOr("CageSize", "");
+        provisionSeconds = Math.clamp(input.getIntOr("CageProvisionSeconds", 0), 0, 59);
         bellCooldown = 240 + bird.getRandom().nextInt(360);
         if (anchor != null && dimension.equals(bird.level().dimension().identifier().toString())) {
             for (ParrotCageBlock.Size size : ParrotCageBlock.Size.values()) {
@@ -80,6 +73,7 @@ public final class CageRoost {
             }
         }
         anchor = null;
+        bird.setCageSize(null);
         if (bird.getAttribute(Attributes.SCALE).removeModifier(SCALE)) {
             bird.refreshDimensions();
             bird.setInSittingPose(bird.isOrderedToSit());
@@ -104,24 +98,28 @@ public final class CageRoost {
         });
     }
 
+    public static PetParrotEntity occupantAt(ServerLevel level, BlockPos anchor) {
+        var occupants = level.getEntitiesOfClass(PetParrotEntity.class, new AABB(anchor).inflate(4),
+            bird -> bird.isAlive() && bird.getCageRoost().at(level, anchor));
+        return occupants.isEmpty() ? null : occupants.getFirst();
+    }
+
     public static void transfer(ServerLevel level, ParrotCageBlock cage, BlockPos anchor, Direction facing, Player player) {
         Vec3 perch = cage.perch(anchor, facing);
         if (!level.areEntitiesLoaded(ChunkPos.pack(BlockPos.containing(perch)))) return;
-        List<PetParrotEntity> occupants = level.getEntitiesOfClass(PetParrotEntity.class, new AABB(anchor).inflate(4),
-            bird -> bird.isAlive() && bird.getCageRoost().at(level, anchor));
-        if (!occupants.isEmpty()) {
-            PetParrotEntity bird = occupants.getFirst();
-            if (!bird.isOwnedBy(player)) {
+        PetParrotEntity resident = occupantAt(level, anchor);
+        if (resident != null) {
+            if (!resident.isOwnedBy(player)) {
                 message(player, "occupied");
                 return;
             }
-            Vec3 exit = findExit(level, bird, cage, anchor, facing);
+            Vec3 exit = findExit(level, resident, cage, anchor, facing);
             if (exit == null) {
                 message(player, "exit_blocked");
                 return;
             }
-            bird.getCageRoost().release(bird, exit);
-            message(player, "released", bird.getDisplayName());
+            resident.getCageRoost().release(resident, exit);
+            message(player, "released", resident.getDisplayName());
             return;
         }
         Vec3 doorway = perch.relative(facing, cage.size().depth * 0.5 + 0.04).add(0, 0.16, 0);
@@ -144,6 +142,7 @@ public final class CageRoost {
         anchor = root.immutable();
         dimension = level.dimension().identifier().toString();
         sizeName = cage.size().name();
+        provisionSeconds = 0;
         bellCooldown = 240 + bird.getRandom().nextInt(360);
         bird.getNavigation().stop();
         setPerchedScale(bird, cage.size());
@@ -234,6 +233,7 @@ public final class CageRoost {
 
     private void release(PetParrotEntity bird, Vec3 feet) {
         anchor = null;
+        bird.setCageSize(null);
         dimension = "";
         sizeName = "";
         bird.snapTo(feet);
@@ -263,7 +263,18 @@ public final class CageRoost {
         }
         setPerchedScale(bird, cage.size());
         position(bird, cage.perch(anchor, facing), facing);
-        if (bird.getActivity() != PetParrotActivity.NIGHT_ROOST && state.getValue(ParrotCageBlock.BELL) && --bellCooldown <= 0) {
+        if (bird.tickCount % 20 == 0 && level.getBlockEntity(anchor) instanceof CageFittingsBlockEntity tray) {
+            tray.recordOccupiedSecond();
+            provisionSeconds = (provisionSeconds + 1) % 60;
+            if (provisionSeconds == 30 || provisionSeconds == 0) {
+                CageSupplies.offerMeal(tray, bird, provisionSeconds == 30);
+            }
+        }
+        if (bird.getActivity() == PetParrotActivity.FORAGE && bird.getActivityTicks(0) == 10F) {
+            Vec3 dish = CageLayout.mealPosition(cage.size(), bird.getCageMeal());
+            CageSupplies.playMealContact(level, bird, CageLayout.toWorld(anchor, facing, dish));
+        }
+        if (state.getValue(ParrotCageBlock.BELL) && --bellCooldown <= 0) {
             bellCooldown = 240 + bird.getRandom().nextInt(360);
             level.playSound(null, anchor, SoundEvents.BELL_BLOCK, SoundSource.NEUTRAL, 0.20F, 1.65F);
             level.sendParticles(ParticleTypes.NOTE, bird.getX(), bird.getEyeY() + 0.08, bird.getZ(), 1, 0, 0, 0, 0);
@@ -288,13 +299,22 @@ public final class CageRoost {
     }
 
     private void setPerchedScale(PetParrotEntity bird, ParrotCageBlock.Size cage) {
+        bird.setCageSize(cage);
         AttributeInstance scale = bird.getAttribute(Attributes.SCALE);
         double oldFactor = currentFactor(bird);
         double naturalScale = scale.getValue() / oldFactor;
-        double length = lengthCm(bird) * naturalScale * bird.getAgeScale() / 16.0;
-        EntityDimensions outside = outsideDimensions(bird);
+        // Fit the adult silhouette. Chicks then keep their usual proportion to an adult in the same cage.
+        double length = lengthCm(bird) * naturalScale / 16.0;
+        EntityDimensions outside = bird.getType().getDimensions().scale((float) naturalScale);
         // Each tail extends behind the feet. The perch is offset along the long axis to give it more room.
-        double factor = Math.min(1, 0.80 * (cage.width - 0.20) / length);
+        double displayScale = switch (cage) {
+            case STANDARD -> 0.54;
+            case LARGE -> 0.62;
+            case DELUXE -> 0.68;
+            case SUPER_DELUXE -> 0.74;
+            case GIANT -> 0.80;
+        };
+        double factor = Math.min(displayScale, 0.80 * (cage.width - 0.20) / length);
         double crossRoom = Math.min(cage.depth - 0.18, cage.width * 0.72 - 0.14);
         factor = Math.min(factor, crossRoom / outside.width());
         factor = Math.min(factor, (cage.height - cage.perchHeight - 0.12) / outside.height());
@@ -305,17 +325,7 @@ public final class CageRoost {
     }
 
     private static int lengthCm(PetParrotEntity bird) {
-        if (bird instanceof MacawEntity macaw) return macaw.getSpecies().lengthCm();
-        if (bird instanceof CompanionParrotEntity companion) return companion.getSpecies().lengthCm();
-        if (bird instanceof AfricanGreyEntity grey) return grey.getPlumageId().equals("timneh") ? 30 : 33;
-        if (bird instanceof BudgerigarEntity) return 18;
-        if (bird instanceof LovebirdEntity) return 15;
-        if (bird instanceof CaiqueEntity) return 23;
-        if (bird instanceof GreenCheekConureEntity) return 26;
-        if (bird instanceof MonkParakeetEntity) return 29;
-        if (bird instanceof CockatielEntity) return 31;
-        if (bird instanceof EclectusEntity) return 35;
-        if (bird instanceof SulfurCrestedCockatooEntity) return 50;
-        return 30; // Sun conure
+        var length = ParrotEcology.forBird(bird).adultLengthCm();
+        return bird instanceof AfricanGreyEntity && bird.getPlumageId().equals("timneh") ? length.minCm() : length.maxCm();
     }
 }

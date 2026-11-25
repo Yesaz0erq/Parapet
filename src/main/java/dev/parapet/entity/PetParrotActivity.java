@@ -3,7 +3,7 @@ package dev.parapet.entity;
 public enum PetParrotActivity {
     IDLE(0), FORAGE(32), PREEN(56), GREET(30), BEG(32), RAISE_CREST(36), BATHE(72),
     STROKE(30), TOUCH_TARGET(32), STRETCH(46), HIGH_FIVE(34), TURN(42),
-    NIGHT_ROOST(40), RUFFLE(28), LISTEN(32), CONTACT_CALL(24);
+    NIGHT_ROOST(40), RUFFLE(28), LISTEN(32), CONTACT_CALL(24), DRINK(36);
 
     private static final PetParrotActivity[] ACTIVITIES = values();
     private final int duration;

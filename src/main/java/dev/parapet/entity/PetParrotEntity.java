@@ -1,14 +1,19 @@
 package dev.parapet.entity;
 
 import dev.parapet.ParapetFurniture;
+import dev.parapet.item.BirdFeedBagItem;
 import dev.parapet.guide.ParrotFieldGuide;
 import dev.parapet.cage.CageRoost;
+import dev.parapet.cage.CageMeal;
+import dev.parapet.block.ParrotCageBlock;
 import dev.parapet.cage.CageRoostGoal;
 import dev.parapet.interaction.ParrotInteractionMenu;
 import dev.parapet.interaction.ParrotInteractionMenu.Availability;
 import dev.parapet.interaction.ParrotTrick;
 import java.util.EnumSet;
 import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -69,6 +74,11 @@ public abstract class PetParrotEntity extends TamableAnimal {
         SynchedEntityData.defineId(PetParrotEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Long> ACTIVITY_START =
         SynchedEntityData.defineId(PetParrotEntity.class, EntityDataSerializers.LONG);
+    private static final EntityDataAccessor<Integer> CAGE_TIER =
+        SynchedEntityData.defineId(PetParrotEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> CAGE_MEAL =
+        SynchedEntityData.defineId(PetParrotEntity.class, EntityDataSerializers.INT);
+    private static final ParrotCageBlock.Size[] CAGE_SIZES = ParrotCageBlock.Size.values();
     public static final int MAX_AFFINITY = 100;
     private static final EntityDataAccessor<Integer> AFFINITY =
         SynchedEntityData.defineId(PetParrotEntity.class, EntityDataSerializers.INT);
@@ -122,7 +132,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
         goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         goalSelector.addGoal(3, new ParrotBreedGoal(this));
         goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.1, 5.0F, 2.0F));
-        goalSelector.addGoal(5, new TemptGoal(this, 1.0, stack -> isTame() && !cageRoost.isAssigned() && acceptsFood(stack), false));
+        goalSelector.addGoal(5, new TemptGoal(this, 1.0, stack -> isTame() && !cageRoost.isAssigned() && isOfferedFood(stack), false));
         goalSelector.addGoal(6, new FollowParentGoal(this, 1.0));
         goalSelector.addGoal(7, new ParrotNightRoostGoal(this));
         goalSelector.addGoal(7, new StillActivityGoal());
@@ -159,6 +169,10 @@ public abstract class PetParrotEntity extends TamableAnimal {
         }
         if (level() instanceof ServerLevel server && cageRoost.isAssigned()) {
             cageRoost.tick(server, this);
+            if (getCageSize() != null && getActivity() == PetParrotActivity.FORAGE
+                && (getActivityTicks(0) >= PetParrotActivity.FORAGE.durationTicks() || hurtTime > 0)) {
+                setActivity(PetParrotActivity.IDLE);
+            }
         }
         previousFlightAmount = flightAmount;
         boolean flying = !onGround() && !isInWater() && !isPassenger();
@@ -218,14 +232,77 @@ public abstract class PetParrotEntity extends TamableAnimal {
         builder.define(PERSONALITY, ParrotPersonality.CALM.ordinal());
         builder.define(ACTIVITY, PetParrotActivity.IDLE.ordinal());
         builder.define(ACTIVITY_START, 0L);
+        builder.define(CAGE_TIER, -1);
+        builder.define(CAGE_MEAL, CageMeal.HAND.ordinal());
     }
 
     public final CageRoost getCageRoost() {
         return cageRoost;
     }
 
+    public final ParrotCageBlock.Size getCageSize() {
+        int tier = entityData.get(CAGE_TIER);
+        return tier >= 0 && tier < CAGE_SIZES.length ? CAGE_SIZES[tier] : null;
+    }
+
+    public final void setCageSize(ParrotCageBlock.Size size) {
+        if (size == getCageSize()) return;
+        entityData.set(CAGE_TIER, size == null ? -1 : size.ordinal());
+        entityData.set(CAGE_MEAL, CageMeal.HAND.ordinal());
+        setActivity(PetParrotActivity.IDLE);
+    }
+
+    public final CageMeal getCageMeal() {
+        return CageMeal.byIndex(entityData.get(CAGE_MEAL));
+    }
+
+    public final boolean beginCageMeal(ItemStack serving) {
+        CageMeal slot;
+        if (serving.is(ParapetFurniture.BIRD_FEED)) slot = CageMeal.SEED;
+        else if (serving.is(ParapetFurniture.PREMIUM_BIRD_FEED)) slot = CageMeal.PREMIUM;
+        else if (serving.is(ParapetFurniture.WATER_BOWL.asItem())) slot = CageMeal.WATER;
+        else return false;
+        return beginCageMeal(slot);
+    }
+
+    private boolean beginCageMeal(CageMeal slot) {
+        if (!cageRoost.isAssigned() || getActivity() != PetParrotActivity.IDLE
+            || !isAlive() || hurtTime > 0 || isOnFire()) return false;
+        entityData.set(CAGE_MEAL, slot.ordinal());
+        setActivity(PetParrotActivity.FORAGE);
+        return true;
+    }
+
     public final int getAffinity() {
         return entityData.get(AFFINITY);
+    }
+
+    public final boolean increaseAffinity(int gain) {
+        int current = getAffinity();
+        if (gain <= 0 || current == MAX_AFFINITY) return false;
+        entityData.set(AFFINITY, Math.min(MAX_AFFINITY, current + gain));
+        return true;
+    }
+
+    /** Called for a gift in hand, including one offered through a cage door. */
+    public final void acceptGift(ServerLevel server, Player player, InteractionHand hand) {
+        ItemStack gift = player.getItemInHand(hand);
+        if (!ParapetFurniture.BIRD_GIFTS.contains(gift.getItem())) return;
+        if (!isOwnedBy(player)) {
+            player.sendOverlayMessage(Component.translatable("message.parapet.gift_owner_only"));
+            return;
+        }
+        if (!increaseAffinity(6)) {
+            showAffinity(player, "message.parapet.affinity_full");
+            return;
+        }
+        player.sendOverlayMessage(Component.translatable("message.parapet.gift_given", getDisplayName(),
+            gift.getHoverName(), getAffinity(), MAX_AFFINITY));
+        gift.consume(1, player);
+        getLookControl().setLookAt(player, 40F, 30F);
+        if (getActivity() == PetParrotActivity.IDLE && onGround()) setActivity(PetParrotActivity.GREET);
+        playSound(SoundEvents.PARROT_AMBIENT, 0.5F, 1.20F);
+        server.sendParticles(ParticleTypes.HEART, getX(), getEyeY() + 0.12, getZ(), 3, 0.14, 0.08, 0.14, 0.01);
     }
 
     public final ParrotPersonality getPersonality() {
@@ -251,6 +328,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
     }
 
     final void setActivity(PetParrotActivity activity) {
+        if (cageRoost.isAssigned() && activity != PetParrotActivity.IDLE && activity != PetParrotActivity.FORAGE) return;
         if (getActivity() != activity) {
             if (activity != PetParrotActivity.BEG && activity != PetParrotActivity.RAISE_CREST) {
                 displayAudience = null;
@@ -291,10 +369,10 @@ public abstract class PetParrotEntity extends TamableAnimal {
     @Override
     protected void customServerAiStep(ServerLevel level) {
         super.customServerAiStep(level);
-        perchRoutine.tick(level, this, tickCount >= ignoreFoodUntil);
         if (cageRoost.isAssigned()) {
             return;
         }
+        perchRoutine.tick(level, this, tickCount >= ignoreFoodUntil);
         boolean still = navigation.isDone() && getDeltaMovement().horizontalDistanceSqr() < 0.0025;
         greetReturningOwner(level, still);
         flockContacts.tick(level, this);
@@ -521,6 +599,16 @@ public abstract class PetParrotEntity extends TamableAnimal {
         return SEEDS.test(stack);
     }
 
+    protected final boolean isOfferedFood(ItemStack stack) {
+        return acceptsFood(stack) || ParapetFurniture.isBirdFeed(stack);
+    }
+
+    @Override
+    protected void usePlayerItem(Player player, InteractionHand hand, ItemStack stack) {
+        if (stack.getItem() instanceof BirdFeedBagItem) BirdFeedBagItem.serve(player, hand, stack);
+        else super.usePlayerItem(player, hand, stack);
+    }
+
     @Override
     public boolean isFood(ItemStack stack) {
         return isTame() && !cageRoost.isAssigned() && !isOrderedToSit() && acceptsFood(stack);
@@ -541,6 +629,12 @@ public abstract class PetParrotEntity extends TamableAnimal {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if (ParapetFurniture.BIRD_GIFTS.contains(stack.getItem())) {
+            if (level() instanceof ServerLevel server) acceptGift(server, player, hand);
+            return InteractionResult.SUCCESS;
+        }
+        if (hand == InteractionHand.MAIN_HAND && stack.isEmpty()
+            && ParapetFurniture.BIRD_GIFTS.contains(player.getOffhandItem().getItem())) return InteractionResult.PASS;
         if (!isTame()) {
             WildParrotApproach.Lure lure = WildParrotApproach.Lure.of(this, stack);
             if (lure != WildParrotApproach.Lure.NONE || SEEDS.test(stack) || stack.is(Items.COCOA_BEANS)
@@ -555,20 +649,19 @@ public abstract class PetParrotEntity extends TamableAnimal {
                 return InteractionResult.SUCCESS;
             }
         }
-        if (stack.is(ParapetFurniture.BIRD_FEED) || stack.is(ParapetFurniture.PREMIUM_BIRD_FEED)) {
+        if (ParapetFurniture.isBirdFeed(stack)) {
             if (level() instanceof ServerLevel server) {
                 if (!isOwnedBy(player)) {
                     player.sendOverlayMessage(Component.translatable("message.parapet.feed_owner_only"));
-                } else if (getAffinity() == MAX_AFFINITY) {
+                } else if (!increaseAffinity(ParapetFurniture.isPremiumFeed(stack) ? 15 : 5)) {
                     showAffinity(player, "message.parapet.affinity_full");
                 } else {
-                    int gain = stack.is(ParapetFurniture.PREMIUM_BIRD_FEED) ? 15 : 5;
-                    if (getActivity().isNaturalDetail()) {
+                    pauseForaging();
+                    if (getActivity().isNaturalDetail() || getActivity() == PetParrotActivity.FORAGE) {
                         setActivity(PetParrotActivity.IDLE);
-                        pauseForaging();
                     }
-                    entityData.set(AFFINITY, Math.min(MAX_AFFINITY, getAffinity() + gain));
                     usePlayerItem(player, hand, stack);
+                    beginCageMeal(CageMeal.HAND);
                     playSound(SoundEvents.PARROT_EAT, 0.75F, 1.1F);
                     server.sendParticles(ParticleTypes.HEART, getX(), getEyeY() + 0.12, getZ(), 3, 0.15, 0.08, 0.15, 0.01);
                     showAffinity(player, "message.parapet.affinity");
@@ -582,7 +675,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
         }
         if (isOwnedBy(player) && stack.isEmpty() && hand == InteractionHand.MAIN_HAND) {
             ItemStack offhand = player.getOffhandItem();
-            if (acceptsFood(offhand) || offhand.is(ParapetFurniture.BIRD_FEED) || offhand.is(ParapetFurniture.PREMIUM_BIRD_FEED)) {
+            if (isOfferedFood(offhand)) {
                 return InteractionResult.PASS;
             }
             if (player instanceof ServerPlayer owner) {
@@ -670,7 +763,8 @@ public abstract class PetParrotEntity extends TamableAnimal {
 
         private boolean isLooseFood(ItemEntity item) {
             return item.isAlive() && item.onGround() && !item.isInWater() && !item.hasPickUpDelay()
-                && acceptsFood(item.getItem()) && Math.abs(item.getY() - getY()) <= 0.55 && hasLineOfSight(item);
+                && (acceptsFood(item.getItem()) || ParapetFurniture.isLooseFeed(item.getItem()))
+                && Math.abs(item.getY() - getY()) <= 0.55 && hasLineOfSight(item);
         }
 
         @Override
@@ -691,7 +785,10 @@ public abstract class PetParrotEntity extends TamableAnimal {
                     }
                 }
             }
-            if (target == null && !isTame() && tickCount >= nextPatchSearch) {
+            if (target == null && server.getGameRules().get(GameRules.MOB_GRIEFING)) {
+                patch = ParrotForagePatch.nearbyFeed(server, PetParrotEntity.this);
+            }
+            if (target == null && patch == null && !isTame() && tickCount >= nextPatchSearch) {
                 nextPatchSearch = tickCount + 160 + random.nextInt(180);
                 patch = ParrotForagePatch.nearby(server, PetParrotEntity.this);
             }
@@ -703,7 +800,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
             PetParrotActivity activity = getActivity();
             if (tickCount >= stopAtTick || !canForage() || !(level() instanceof ServerLevel server)
                 || activity != PetParrotActivity.IDLE && activity != PetParrotActivity.FORAGE) return false;
-            if (patch != null) return !isTame() && patch.available(server);
+            if (patch != null) return (patch.feedPile() != null || !isTame()) && patch.available(server);
             return target != null && server.getGameRules().get(GameRules.MOB_GRIEFING) && isLooseFood(target);
         }
 
@@ -723,9 +820,17 @@ public abstract class PetParrotEntity extends TamableAnimal {
             moveControl = new MoveControl<>(PetParrotEntity.this);
             setNoGravity(false);
             Vec3 feet = feedingPosition();
-            if (!withinReach() && !navigation.moveTo(feet.x, feet.y, feet.z, 0.85)) {
+            if (!withinReach() && !canWalkDirectly(feet) && !navigation.moveTo(feet.x, feet.y, feet.z, 0.85)) {
                 stopAtTick = tickCount;
             }
+        }
+
+        private boolean canWalkDirectly(Vec3 feet) {
+            Vec3 delta = feet.subtract(position());
+            if (delta.lengthSqr() > 4 || Math.abs(delta.y) > 0.55) return false;
+            BlockPos support = BlockPos.containing(position().add(delta.scale(0.5))).below();
+            return level().getBlockState(support).isFaceSturdy(level(), support, Direction.UP)
+                && level().noCollision(PetParrotEntity.this, getBoundingBox().expandTowards(delta.x, 0, delta.z).move(0, 0.005, 0));
         }
 
         private Vec3 feedingPosition() {
@@ -733,7 +838,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
         }
 
         private boolean withinReach() {
-            return patch != null ? distanceToSqr(patch.feet()) <= 0.36 && distanceToSqr(Vec3.atBottomCenterOf(patch.plant())) <= 1.18
+            return patch != null ? distanceToSqr(patch.feet()) <= 0.36 && distanceToSqr(Vec3.atBottomCenterOf(patch.pos())) <= 1.18
                 : distanceToSqr(target) <= REACH_SQUARED;
         }
 
@@ -743,12 +848,12 @@ public abstract class PetParrotEntity extends TamableAnimal {
                 return;
             }
             Vec3 feet = feedingPosition();
-            if (patch != null) getLookControl().setLookAt(Vec3.atCenterOf(patch.plant()));
+            if (patch != null) getLookControl().setLookAt(Vec3.atCenterOf(patch.pos()));
             else getLookControl().setLookAt(target, 35.0F, 35.0F);
             if (!withinReach()) {
                 if (getActivity() == PetParrotActivity.FORAGE) {
                     stopAtTick = tickCount;
-                } else if (navigation.isDone() && distanceToSqr(feet) <= 1.4 * 1.4) {
+                } else if (navigation.isDone() && canWalkDirectly(feet)) {
                     moveControl.setWantedPosition(feet.x, getY(), feet.z, 0.65);
                 } else if (navigation.isDone()) {
                     stopAtTick = tickCount;
@@ -761,9 +866,14 @@ public abstract class PetParrotEntity extends TamableAnimal {
                 return;
             }
             if (patch != null) {
-                patch.finish((ServerLevel) level());
-                playSound(SoundEvents.PARROT_EAT, 0.32F, 1.25F);
-                nextPatchSearch = tickCount + 500 + random.nextInt(480);
+                if (patch.finish((ServerLevel) level())) {
+                    if (patch.feedPile() != null) {
+                        finishMeal();
+                    } else {
+                        playSound(SoundEvents.PARROT_EAT, 0.32F, 1.25F);
+                        nextPatchSearch = tickCount + 500 + random.nextInt(480);
+                    }
+                }
                 stopAtTick = tickCount;
                 setActivity(PetParrotActivity.IDLE);
                 return;
@@ -774,13 +884,15 @@ public abstract class PetParrotEntity extends TamableAnimal {
             } else {
                 target.setItem(food.copyWithCount(food.getCount() - 1));
             }
-            if (getHealth() < getMaxHealth()) {
-                heal(1.0F);
-            }
-            playSound(SoundEvents.PARROT_EAT, 0.65F, 1.10F);
-            nextSearchTick = tickCount + 480 + random.nextInt(240);
+            finishMeal();
             target = null;
             setActivity(PetParrotActivity.IDLE);
+        }
+
+        private void finishMeal() {
+            if (getHealth() < getMaxHealth()) heal(1.0F);
+            playSound(SoundEvents.PARROT_EAT, 0.65F, 1.10F);
+            nextSearchTick = tickCount + 480 + random.nextInt(240);
         }
 
         @Override

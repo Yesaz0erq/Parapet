@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["B B", " B "],
+  "key": {"B": "minecraft:brick"},
+  "result": {"id": "parapet:water_bowl", "count": 1}
+}

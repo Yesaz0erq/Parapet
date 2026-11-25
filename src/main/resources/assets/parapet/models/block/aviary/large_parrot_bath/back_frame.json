@@ -2,9 +2,9 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "glaze": "parapet:block/aviary/glaze",
-    "red_clay": "parapet:block/aviary/red_clay",
-    "particle": "parapet:block/aviary/red_clay"
+    "bath_celadon": "parapet:block/aviary/bath_celadon",
+    "bath_terracotta": "parapet:block/aviary/bath_terracotta",
+    "particle": "parapet:block/aviary/bath_terracotta"
   },
   "elements": [
     {
@@ -26,7 +26,7 @@
             16,
             5.9
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "east": {
           "uv": [
@@ -35,7 +35,7 @@
             16,
             15.9
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "south": {
           "uv": [
@@ -44,7 +44,7 @@
             16,
             5.9
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "west": {
           "uv": [
@@ -53,7 +53,7 @@
             16,
             15.9
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "up": {
           "uv": [
@@ -62,7 +62,7 @@
             14,
             16
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "down": {
           "uv": [
@@ -71,7 +71,7 @@
             14,
             16
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         }
       }
     },
@@ -94,7 +94,7 @@
             2.85,
             9.35
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "east": {
           "uv": [
@@ -103,7 +103,7 @@
             16,
             13.35
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "south": {
           "uv": [
@@ -112,7 +112,7 @@
             2.85,
             9.35
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "west": {
           "uv": [
@@ -121,7 +121,7 @@
             16,
             13.35
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "up": {
           "uv": [
@@ -130,7 +130,7 @@
             4.85,
             16
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "down": {
           "uv": [
@@ -139,7 +139,7 @@
             4.85,
             16
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         }
       }
     },
@@ -162,7 +162,7 @@
             15.75,
             11.1
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "east": {
           "uv": [
@@ -171,7 +171,7 @@
             16,
             8.1
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "south": {
           "uv": [
@@ -180,7 +180,7 @@
             15.75,
             11.1
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "west": {
           "uv": [
@@ -189,7 +189,7 @@
             16,
             8.1
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "up": {
           "uv": [
@@ -198,7 +198,7 @@
             15.75,
             16
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "down": {
           "uv": [
@@ -207,7 +207,7 @@
             15.75,
             16
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         }
       }
     },
@@ -230,7 +230,7 @@
             11.37,
             3
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "east": {
           "uv": [
@@ -239,7 +239,7 @@
             16,
             9
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "south": {
           "uv": [
@@ -248,7 +248,7 @@
             11.37,
             3
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "west": {
           "uv": [
@@ -257,7 +257,7 @@
             16,
             9
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "up": {
           "uv": [
@@ -266,7 +266,7 @@
             6.37,
             16
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "down": {
           "uv": [
@@ -275,7 +275,7 @@
             6.37,
             16
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         }
       }
     }

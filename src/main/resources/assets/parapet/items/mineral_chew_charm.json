@@ -1,0 +1,21 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": [
+          "gui"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "parapet:item/mineral_chew_charm"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "parapet:item/aviary/mineral_chew_charm"
+    }
+  }
+}

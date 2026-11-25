@@ -2,8 +2,8 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "water": "parapet:block/aviary/water",
-    "particle": "parapet:block/aviary/water"
+    "bath_ripples": "parapet:block/aviary/bath_ripples",
+    "particle": "parapet:block/aviary/bath_ripples"
   },
   "elements": [
     {
@@ -18,59 +18,14 @@
         12.34
       ],
       "faces": {
-        "north": {
-          "uv": [
-            2,
-            12,
-            14.34,
-            12.12
-          ],
-          "texture": "#water"
-        },
-        "east": {
-          "uv": [
-            2,
-            4,
-            14.34,
-            4.12
-          ],
-          "texture": "#water"
-        },
-        "south": {
-          "uv": [
-            2,
-            12,
-            14.34,
-            12.12
-          ],
-          "texture": "#water"
-        },
-        "west": {
-          "uv": [
-            2,
-            4,
-            14.34,
-            4.12
-          ],
-          "texture": "#water"
-        },
         "up": {
           "uv": [
-            2,
-            3,
-            14.34,
-            15.34
+            3.66,
+            0,
+            16,
+            12.34
           ],
-          "texture": "#water"
-        },
-        "down": {
-          "uv": [
-            2,
-            3,
-            14.34,
-            15.34
-          ],
-          "texture": "#water"
+          "texture": "#bath_ripples"
         }
       }
     }

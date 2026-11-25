@@ -1,0 +1,13 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 2
+  },
+  "gives": {
+    "id": "parapet:bamboo_beads",
+    "count": 2
+  },
+  "xp": 10,
+  "max_uses": 12,
+  "reputation_discount": 0.05
+}

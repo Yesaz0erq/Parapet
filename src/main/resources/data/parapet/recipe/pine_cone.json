@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:spruce_sapling",
+    "minecraft:spruce_leaves"
+  ],
+  "result": {
+    "id": "parapet:pine_cone",
+    "count": 2
+  }
+}

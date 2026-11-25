@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:bamboo",
+    "minecraft:bamboo",
+    "minecraft:string"
+  ],
+  "result": {
+    "id": "parapet:bamboo_beads",
+    "count": 1
+  }
+}

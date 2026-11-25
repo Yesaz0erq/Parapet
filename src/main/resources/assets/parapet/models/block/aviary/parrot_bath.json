@@ -2,10 +2,10 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "glaze": "parapet:block/aviary/glaze",
+    "bath_celadon": "parapet:block/aviary/bath_celadon",
+    "bath_terracotta": "parapet:block/aviary/bath_terracotta",
     "ivory": "parapet:block/aviary/ivory",
-    "red_clay": "parapet:block/aviary/red_clay",
-    "particle": "parapet:block/aviary/red_clay"
+    "particle": "parapet:block/aviary/bath_terracotta"
   },
   "elements": [
     {
@@ -27,7 +27,7 @@
             15.2,
             10.78
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "east": {
           "uv": [
@@ -36,7 +36,7 @@
             11.2,
             13.78
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "south": {
           "uv": [
@@ -45,7 +45,7 @@
             15.2,
             10.78
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "west": {
           "uv": [
@@ -54,7 +54,7 @@
             11.2,
             13.78
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "up": {
           "uv": [
@@ -63,7 +63,7 @@
             13.2,
             11.2
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "down": {
           "uv": [
@@ -72,7 +72,7 @@
             13.2,
             11.2
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         }
       }
     },
@@ -95,7 +95,7 @@
             14.12,
             9.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "east": {
           "uv": [
@@ -104,7 +104,7 @@
             11.59,
             12.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "south": {
           "uv": [
@@ -113,7 +113,7 @@
             14.12,
             9.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "west": {
           "uv": [
@@ -122,7 +122,7 @@
             11.59,
             12.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "up": {
           "uv": [
@@ -131,7 +131,7 @@
             14.12,
             10.59
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "down": {
           "uv": [
@@ -140,7 +140,7 @@
             14.12,
             10.59
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         }
       }
     },
@@ -163,7 +163,7 @@
             14.12,
             8.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "east": {
           "uv": [
@@ -172,7 +172,7 @@
             10.59,
             8.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "south": {
           "uv": [
@@ -181,7 +181,7 @@
             14.12,
             8.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "west": {
           "uv": [
@@ -190,7 +190,7 @@
             10.59,
             8.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "up": {
           "uv": [
@@ -199,7 +199,7 @@
             15.12,
             6.59
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "down": {
           "uv": [
@@ -208,7 +208,7 @@
             15.12,
             6.59
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         }
       }
     },
@@ -231,7 +231,7 @@
             3.59,
             13.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "east": {
           "uv": [
@@ -240,7 +240,7 @@
             13.94,
             12.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "south": {
           "uv": [
@@ -249,7 +249,7 @@
             3.59,
             13.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "west": {
           "uv": [
@@ -258,7 +258,7 @@
             13.94,
             12.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "up": {
           "uv": [
@@ -267,7 +267,7 @@
             6.59,
             15.94
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "down": {
           "uv": [
@@ -276,7 +276,7 @@
             6.59,
             15.94
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         }
       }
     },
@@ -299,7 +299,7 @@
             6.59,
             8.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "east": {
           "uv": [
@@ -308,7 +308,7 @@
             12.94,
             14.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "south": {
           "uv": [
@@ -317,7 +317,7 @@
             6.59,
             8.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "west": {
           "uv": [
@@ -326,7 +326,7 @@
             12.94,
             14.84
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "up": {
           "uv": [
@@ -335,7 +335,7 @@
             7.59,
             14.94
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         },
         "down": {
           "uv": [
@@ -344,7 +344,7 @@
             7.59,
             14.94
           ],
-          "texture": "#red_clay"
+          "texture": "#bath_terracotta"
         }
       }
     },
@@ -367,7 +367,7 @@
             13.3,
             11.9
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "east": {
           "uv": [
@@ -376,7 +376,7 @@
             14.3,
             10.9
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "south": {
           "uv": [
@@ -385,7 +385,7 @@
             13.3,
             11.9
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "west": {
           "uv": [
@@ -394,7 +394,7 @@
             14.3,
             10.9
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "up": {
           "uv": [
@@ -403,7 +403,7 @@
             13.3,
             13.3
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "down": {
           "uv": [
@@ -412,7 +412,7 @@
             13.3,
             13.3
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         }
       }
     },
@@ -435,7 +435,7 @@
             14.8,
             5.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "east": {
           "uv": [
@@ -444,7 +444,7 @@
             10.01,
             1.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "south": {
           "uv": [
@@ -453,7 +453,7 @@
             14.8,
             5.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "west": {
           "uv": [
@@ -462,7 +462,7 @@
             10.01,
             1.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "up": {
           "uv": [
@@ -471,7 +471,7 @@
             15.8,
             14.01
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "down": {
           "uv": [
@@ -480,7 +480,7 @@
             15.8,
             14.01
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         }
       }
     },
@@ -503,7 +503,7 @@
             14.8,
             13.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "east": {
           "uv": [
@@ -512,7 +512,7 @@
             14.01,
             15.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "south": {
           "uv": [
@@ -521,7 +521,7 @@
             14.8,
             13.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "west": {
           "uv": [
@@ -530,7 +530,7 @@
             14.01,
             15.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "up": {
           "uv": [
@@ -539,7 +539,7 @@
             15.8,
             4.01
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "down": {
           "uv": [
@@ -548,7 +548,7 @@
             15.8,
             4.01
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         }
       }
     },
@@ -571,7 +571,7 @@
             14.01,
             10.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "east": {
           "uv": [
@@ -580,7 +580,7 @@
             10.78,
             6.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "south": {
           "uv": [
@@ -589,7 +589,7 @@
             14.01,
             10.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "west": {
           "uv": [
@@ -598,7 +598,7 @@
             10.78,
             6.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "up": {
           "uv": [
@@ -607,7 +607,7 @@
             4.01,
             14.78
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "down": {
           "uv": [
@@ -616,7 +616,7 @@
             4.01,
             14.78
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         }
       }
     },
@@ -639,7 +639,7 @@
             2.01,
             13.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "east": {
           "uv": [
@@ -648,7 +648,7 @@
             10.78,
             14.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "south": {
           "uv": [
@@ -657,7 +657,7 @@
             2.01,
             13.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "west": {
           "uv": [
@@ -666,7 +666,7 @@
             10.78,
             14.86
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "up": {
           "uv": [
@@ -675,7 +675,7 @@
             13.01,
             10.78
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         },
         "down": {
           "uv": [
@@ -684,7 +684,7 @@
             13.01,
             10.78
           ],
-          "texture": "#glaze"
+          "texture": "#bath_celadon"
         }
       }
     },
@@ -887,6 +887,346 @@
             8,
             14.3,
             8.08
+          ],
+          "texture": "#ivory"
+        }
+      }
+    },
+    {
+      "from": [
+        4.18,
+        2.68,
+        9.38
+      ],
+      "to": [
+        11.82,
+        3.81,
+        13.47
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            5,
+            12.64,
+            6.13
+          ],
+          "texture": "#bath_terracotta"
+        },
+        "east": {
+          "uv": [
+            2,
+            0,
+            6.09,
+            1.13
+          ],
+          "texture": "#bath_terracotta"
+        },
+        "south": {
+          "uv": [
+            8,
+            10,
+            15.64,
+            11.13
+          ],
+          "texture": "#bath_terracotta"
+        },
+        "west": {
+          "uv": [
+            5,
+            5,
+            9.09,
+            6.13
+          ],
+          "texture": "#bath_terracotta"
+        },
+        "up": {
+          "uv": [
+            8,
+            10,
+            15.64,
+            14.09
+          ],
+          "texture": "#bath_terracotta"
+        },
+        "down": {
+          "uv": [
+            2,
+            3,
+            9.64,
+            7.09
+          ],
+          "texture": "#bath_terracotta"
+        }
+      }
+    },
+    {
+      "from": [
+        4.87,
+        3.81,
+        11.38
+      ],
+      "to": [
+        11.13,
+        5.27,
+        13.47
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            4,
+            8.26,
+            5.46
+          ],
+          "texture": "#bath_celadon"
+        },
+        "east": {
+          "uv": [
+            10,
+            14,
+            12.09,
+            15.46
+          ],
+          "texture": "#bath_celadon"
+        },
+        "south": {
+          "uv": [
+            5,
+            9,
+            11.26,
+            10.46
+          ],
+          "texture": "#bath_celadon"
+        },
+        "west": {
+          "uv": [
+            13,
+            4,
+            15.09,
+            5.46
+          ],
+          "texture": "#bath_celadon"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            10.26,
+            6.09
+          ],
+          "texture": "#bath_celadon"
+        },
+        "down": {
+          "uv": [
+            7,
+            9,
+            13.26,
+            11.09
+          ],
+          "texture": "#bath_celadon"
+        }
+      }
+    },
+    {
+      "from": [
+        5.5,
+        5.27,
+        11.9
+      ],
+      "to": [
+        6.15,
+        5.44,
+        12.98
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            5,
+            4.65,
+            5.17
+          ],
+          "texture": "#ivory"
+        },
+        "east": {
+          "uv": [
+            3,
+            15,
+            4.08,
+            15.17
+          ],
+          "texture": "#ivory"
+        },
+        "south": {
+          "uv": [
+            7,
+            10,
+            7.65,
+            10.17
+          ],
+          "texture": "#ivory"
+        },
+        "west": {
+          "uv": [
+            6,
+            4,
+            7.08,
+            4.17
+          ],
+          "texture": "#ivory"
+        },
+        "up": {
+          "uv": [
+            0,
+            13,
+            0.65,
+            14.08
+          ],
+          "texture": "#ivory"
+        },
+        "down": {
+          "uv": [
+            3,
+            3,
+            3.65,
+            4.08
+          ],
+          "texture": "#ivory"
+        }
+      }
+    },
+    {
+      "from": [
+        7.67,
+        5.27,
+        11.9
+      ],
+      "to": [
+        8.32,
+        5.44,
+        12.98
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            7,
+            1.65,
+            7.17
+          ],
+          "texture": "#ivory"
+        },
+        "east": {
+          "uv": [
+            1,
+            1,
+            2.08,
+            1.17
+          ],
+          "texture": "#ivory"
+        },
+        "south": {
+          "uv": [
+            4,
+            12,
+            4.65,
+            12.17
+          ],
+          "texture": "#ivory"
+        },
+        "west": {
+          "uv": [
+            4,
+            6,
+            5.08,
+            6.17
+          ],
+          "texture": "#ivory"
+        },
+        "up": {
+          "uv": [
+            13,
+            0,
+            13.65,
+            1.08
+          ],
+          "texture": "#ivory"
+        },
+        "down": {
+          "uv": [
+            0,
+            5,
+            0.65,
+            6.08
+          ],
+          "texture": "#ivory"
+        }
+      }
+    },
+    {
+      "from": [
+        9.84,
+        5.27,
+        11.9
+      ],
+      "to": [
+        10.49,
+        5.44,
+        12.98
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            14,
+            8,
+            14.65,
+            8.17
+          ],
+          "texture": "#ivory"
+        },
+        "east": {
+          "uv": [
+            14,
+            2,
+            15.08,
+            2.17
+          ],
+          "texture": "#ivory"
+        },
+        "south": {
+          "uv": [
+            1,
+            13,
+            1.65,
+            13.17
+          ],
+          "texture": "#ivory"
+        },
+        "west": {
+          "uv": [
+            2,
+            7,
+            3.08,
+            7.17
+          ],
+          "texture": "#ivory"
+        },
+        "up": {
+          "uv": [
+            10,
+            1,
+            10.65,
+            2.08
+          ],
+          "texture": "#ivory"
+        },
+        "down": {
+          "uv": [
+            13,
+            6,
+            13.65,
+            7.08
           ],
           "texture": "#ivory"
         }

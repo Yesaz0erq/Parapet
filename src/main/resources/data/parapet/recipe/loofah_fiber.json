@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:vine",
+    "minecraft:melon_slice",
+    "minecraft:string"
+  ],
+  "result": {
+    "id": "parapet:loofah_fiber",
+    "count": 2
+  }
+}

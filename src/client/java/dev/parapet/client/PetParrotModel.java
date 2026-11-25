@@ -1,6 +1,7 @@
 package dev.parapet.client;
 
 import dev.parapet.entity.PetParrotActivity;
+import dev.parapet.cage.CageMeal;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
@@ -17,6 +18,7 @@ final class PetParrotModel extends EntityModel<PetParrotRenderer.State> {
     private final ModelPart rightWing;
     private final ModelPart leftLeg;
     private final ModelPart rightLeg;
+    private final CageFeedingPose cageFeeding;
 
     PetParrotModel(ModelPart root, ParrotClips.Size size, String species) {
         super(root);
@@ -31,12 +33,17 @@ final class PetParrotModel extends EntityModel<PetParrotRenderer.State> {
         rightWing = bird.getChild("right_wing");
         leftLeg = bird.getChild("left_leg");
         rightLeg = bird.getChild("right_leg");
+        cageFeeding = new CageFeedingPose(root, head, clips.cageFeed);
     }
 
     @Override
     public void setupAnim(PetParrotRenderer.State state) {
         super.setupAnim(state);
         float time = state.ageInTicks + state.individualPhase;
+        if (state.cage != null) {
+            animateInCage(state, time);
+            return;
+        }
         float flight = state.flightAmount;
         float grounded = 1 - flight;
         float actionFade = Math.min(state.activityTicks, state.activity.durationTicks() - state.activityTicks);
@@ -84,6 +91,56 @@ final class PetParrotModel extends EntityModel<PetParrotRenderer.State> {
         }
     }
 
+    private void animateInCage(PetParrotRenderer.State state, float time) {
+        CageBirdMotion motion = state.cageMotion;
+        // Tighter quarters keep the tail and head turns closer to the perch.
+        float room = switch (state.cage) {
+            case STANDARD -> 0.62F;
+            case LARGE -> 0.76F;
+            case DELUXE -> 0.86F;
+            case SUPER_DELUXE -> 0.94F;
+            case GIANT -> 1F;
+        };
+        float phase = state.activity == PetParrotActivity.FORAGE
+            ? Mth.clamp(state.activityTicks / PetParrotActivity.FORAGE.durationTicks(), 0F, 1F) : 0F;
+        float reach = Mth.clamp(Math.min(phase, 1F - phase) * 5F, 0F, 1F);
+        reach = reach * reach * (3F - 2F * reach);
+        float idleWeight = 1F - reach;
+        float idleTime = time * motion.idleRate * (0.88F + 0.12F * room);
+        clips.cageIdle.apply(Math.round(idleTime * 50F), room * idleWeight);
+        float glance = Mth.sin(idleTime * 0.077F) * idleWeight * room;
+        tail.zRot += 0.035F * motion.tailBalance * glance;
+        head.zRot += 0.04F * glance;
+        if (crest != null) crest.xRot += (motion.style == CageBirdMotion.Style.CREST ? 0.095F : 0.035F) * glance;
+        if (reach == 0F) return;
+
+        // Retiming only the interior keeps the final swallow lined up with the server's meal end.
+        float clipPhase = phase + (motion.idleRate - 1F) * Mth.sin(phase * Mth.TWO_PI) * 0.30F;
+        float units = Math.max(.001F, state.speciesScale * state.ageScale * state.scale / 16F);
+        var approach = cageFeeding.approach(state, units);
+        clips.cageFeed.apply(Math.round(clipPhase * 1600F), reach * approach.weight());
+        CageFeedingPose.moveFeet(approach, units, phase, bird, leftLeg, rightLeg);
+        bird.yRot += approach.bodyYaw() * reach;
+        head.yRot += approach.headYaw() * reach;
+        // The tail stays nearer the main rail as the breast turns towards a lateral feeder.
+        tail.yRot -= approach.bodyYaw() * reach * (state.cage.depth == 1 ? .76F : .51F);
+        float peck = Mth.sin(clipPhase * Mth.TWO_PI * 2F) * reach;
+        tail.xRot -= 0.066F * motion.tailBalance * room * peck;
+        if (state.cageMeal == CageMeal.WATER) {
+            head.xRot -= 0.11F * Math.max(0F, -peck);
+        } else {
+            switch (motion.style) {
+                case SEED -> head.xRot += 0.065F * Mth.sin(clipPhase * Mth.TWO_PI * 5F) * reach;
+                case CREST -> { if (crest != null) crest.xRot -= 0.13F * peck; }
+                case CONURE -> head.zRot += 0.09F * peck;
+                case BROAD_BILL -> head.yRot += 0.12F * peck;
+                case LORY -> head.z -= 0.42F * Math.max(0F, peck);
+                case LONG_TAIL -> tail.zRot += 0.09F * room * peck;
+                case MACAW -> { head.zRot += 0.10F * peck; tail.yRot -= 0.05F * room * peck; }
+            }
+        }
+    }
+
     private void animateOnGround(PetParrotRenderer.State state, float time, float weight) {
         if (state.sitting) {
             bird.y += weight * 1.05F;
@@ -105,17 +162,8 @@ final class PetParrotModel extends EntityModel<PetParrotRenderer.State> {
             }
             case FORAGE -> clips.forage.apply(actionTime, weight);
             case PREEN -> clips.preen.apply(actionTime, weight);
-            case BATHE -> {
-                clips.idle.apply((long) (time * 50F), weight);
-                float edge = Math.min(state.activityTicks, state.activity.durationTicks() - state.activityTicks);
-                float envelope = weight * Mth.clamp(edge / 5.0F, 0F, 1F);
-                float shake = Mth.sin(state.activityTicks * 0.86F);
-                bird.zRot += envelope * 0.11F * shake;
-                bird.xRot += envelope * (0.10F + 0.08F * Mth.sin(state.activityTicks * 0.38F));
-                float spread = envelope * (0.34F + 0.18F * shake);
-                leftWing.zRot -= spread;
-                rightWing.zRot += spread;
-            }
+            case BATHE -> clips.bathe.apply(actionTime, weight * (1F - state.outgoingWeight));
+            case DRINK -> clips.drink.apply(actionTime, weight * (1F - state.outgoingWeight));
             case GREET, STROKE -> {
                 clips.greet.apply(actionTime, weight);
                 if (state.activity == PetParrotActivity.STROKE) {
@@ -210,6 +258,8 @@ final class PetParrotModel extends EntityModel<PetParrotRenderer.State> {
             case RUFFLE -> clips.ruffle.apply(clipTime, weight);
             case LISTEN -> clips.listen.apply(clipTime, weight);
             case CONTACT_CALL -> clips.contactCall.apply(clipTime, weight);
+            case BATHE -> clips.bathe.apply(Math.round(ticks * 50F), weight);
+            case DRINK -> clips.drink.apply(Math.round(ticks * 50F), weight);
             default -> {}
         }
     }

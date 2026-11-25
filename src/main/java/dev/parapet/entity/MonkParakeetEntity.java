@@ -32,7 +32,7 @@ public final class MonkParakeetEntity extends PetParrotEntity {
     @Override
     protected boolean isDisplayAudienceInRange(Player player) {
         return isBaby() && isTame() && player.level() == level() && isOwnedBy(player)
-            && distanceToSqr(player) <= 9.0 && player.isHolding(this::acceptsFood);
+            && distanceToSqr(player) <= 9.0 && player.isHolding(this::isOfferedFood);
     }
 
     @Override

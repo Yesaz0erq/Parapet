@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "parapet:premium_bird_feed",
+    "parapet:premium_bird_feed",
+    "parapet:premium_bird_feed",
+    "parapet:premium_bird_feed",
+    "parapet:premium_bird_feed",
+    "parapet:premium_bird_feed",
+    "parapet:premium_bird_feed",
+    "parapet:premium_bird_feed",
+    "minecraft:paper"
+  ],
+  "result": {
+    "id": "parapet:premium_bird_feed_bag",
+    "count": 1
+  }
+}

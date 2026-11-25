@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:vine",
+    "minecraft:vine",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "parapet:vine_ring",
+    "count": 1
+  }
+}

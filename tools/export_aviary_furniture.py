@@ -1,5 +1,6 @@
 """Export the square cage doors, multipart blocks and inventory models from art/furniture."""
 import json
+import argparse
 from collections import defaultdict
 from pathlib import Path
 
@@ -15,6 +16,10 @@ CAGES = {
 FURNITURE = {"cage_workbench", "parrot_bath", "parrot_play_stand"}
 LARGE_FIXTURES = {"large_parrot_play_stand": (48, 16, 32), "large_parrot_bath": (48, 48, 16)}
 TOYS = {"foraging_ball", "chew_blocks", "rope_swing"}
+FEED_ITEMS = {"bird_feed", "premium_bird_feed", "bird_feed_bag", "premium_bird_feed_bag"}
+FEED_PILES = {"bird_feed_pile", "premium_bird_feed_pile"}
+MOUNTED_TOYS = {"beak_rubbing_perch", "mineral_chew_charm", "double_ring_swing", "large_chew_mobile"}
+CAGE_ONLY_MODELS = {"rope_swing_cage", "chew_blocks_cage"}
 FACINGS = ("north", "east", "south", "west")
 
 
@@ -45,13 +50,17 @@ def read_groups(project):
     return result
 
 
-def save_model(name, elements, inventory=False):
+def save_model(name, elements, inventory=False, display=None):
     materials = sorted({face["texture"][1:] for part in elements for face in part["faces"].values()})
     textures = {material: "parapet:block/aviary/" + material for material in materials}
-    textures["particle"] = textures[next((m for m in ("honey_oak","smoked_spruce","walnut","red_clay","linen") if m in textures), materials[0])]
+    preferred = ("premium_seed_mix", "seed_mix", "feed_moss_canvas", "feed_jute", "bath_terracotta",
+                 "honey_oak", "smoked_spruce", "walnut", "red_clay", "linen")
+    textures["particle"] = textures[next((m for m in preferred if m in textures), materials[0])]
     model = {"parent": "minecraft:block/block", "ambientocclusion": False, "textures": textures, "elements": elements}
     if inventory:
         model["display"] = {"gui": {"rotation": [25, 35, 0], "translation": [0, 0, 0], "scale": [.79, .79, .79]}}
+    if display:
+        model["display"] = display
     write(ASSETS / "models" / (name + ".json"), model)
     return "parapet:" + name
 
@@ -96,6 +105,41 @@ def model_ref(path):
 
 def item_definition(name, model):
     write(ASSETS / "items" / (name + ".json"), {"model": model})
+
+
+def export_feed(name, groups):
+    if name in FEED_PILES:
+        portions, variants = [], {}
+        for tier in range(1, 5):
+            portions.extend(groups[f"portion_{tier}"])
+            ref = save_model(f"block/aviary/{name}_{tier}", portions)
+            variants[f"portions={tier}"] = {"model": ref}
+        write(ASSETS / "blockstates" / (name + ".json"), {"variants": variants})
+        return
+    export_icon_and_held_model(name, groups)
+
+
+def export_icon_and_held_model(name, groups):
+    held = save_model("item/aviary/" + name, groups["frame"], True)
+    write(ASSETS / "models/item" / (name + ".json"), {
+        "parent": "minecraft:item/generated", "textures": {"layer0": "parapet:item/" + name}})
+    item_definition(name, {
+        "type": "minecraft:select", "property": "minecraft:display_context",
+        "cases": [{"when": ["gui"], "model": model_ref("parapet:item/" + name)}],
+        "fallback": model_ref(held),
+    })
+
+
+def export_water_bowl(groups, display):
+    name = "water_bowl"
+    empty = save_model("block/aviary/" + name, groups["frame"], display=display)
+    filled = save_model("block/aviary/" + name + "_filled", groups["frame"] + groups["water"], display=display)
+    write(ASSETS / "blockstates" / (name + ".json"), {"variants":{
+        "filled=false":{"model":empty}, "filled=true":{"model":filled}}})
+    item_definition(name, {
+        "type":"minecraft:select", "property":"minecraft:block_state", "block_state_property":"filled",
+        "cases":[{"when":"true", "model":model_ref(filled)}], "fallback":model_ref(empty),
+    })
 
 
 def export_large_fixture(name, groups):
@@ -190,11 +234,31 @@ def export_cage(name, groups):
 
 
 def main():
-    write(ASSETS / "models/block/aviary/empty.json",
-          {"textures":{"particle":"parapet:block/aviary/iron"}, "elements":[]})
-    for path in sorted((ROOT / "art/furniture").glob("*.bbmodel")):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("models", nargs="*", help="Blockbench project basenames; default: all furniture.")
+    names = parser.parse_args().models
+    folder = ROOT / "art/furniture"
+    if not names:
+        write(ASSETS / "models/block/aviary/empty.json",
+              {"textures":{"particle":"parapet:block/aviary/iron"}, "elements":[]})
+    paths = [folder / (name + ".bbmodel") for name in names] if names else sorted(folder.glob("*.bbmodel"))
+    for path in paths:
         name = path.stem
-        groups = read_groups(json.loads(path.read_text()))
+        project = json.loads(path.read_text())
+        groups = read_groups(project)
+        if name in MOUNTED_TOYS:
+            export_icon_and_held_model(name, groups)
+            continue
+        if name in CAGE_ONLY_MODELS:
+            model = save_model("item/aviary/" + name, groups["frame"])
+            item_definition("cage_fitting/" + name.removesuffix("_cage"), model_ref(model))
+            continue
+        if name == "water_bowl":
+            export_water_bowl(groups, project.get("display"))
+            continue
+        if name in FEED_ITEMS or name in FEED_PILES:
+            export_feed(name, groups)
+            continue
         if name in CAGES:
             export_cage(name, groups)
             continue

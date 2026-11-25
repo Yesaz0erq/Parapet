@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "filled=false": {
+      "model": "parapet:block/aviary/water_bowl"
+    },
+    "filled=true": {
+      "model": "parapet:block/aviary/water_bowl_filled"
+    }
+  }
+}

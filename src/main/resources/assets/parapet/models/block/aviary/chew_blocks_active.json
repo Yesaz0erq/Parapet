@@ -2,14 +2,14 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "berry": "parapet:block/aviary/berry",
-    "honey_oak": "parapet:block/aviary/honey_oak",
     "ivory": "parapet:block/aviary/ivory",
     "perch_bark": "parapet:block/aviary/perch_bark",
-    "rope_bead": "parapet:block/aviary/rope_bead",
+    "toy_honeywood": "parapet:block/aviary/toy_honeywood",
+    "toy_rosewood": "parapet:block/aviary/toy_rosewood",
+    "toy_tealwood": "parapet:block/aviary/toy_tealwood",
     "twine": "parapet:block/aviary/twine",
     "walnut": "parapet:block/aviary/walnut",
-    "particle": "parapet:block/aviary/honey_oak"
+    "particle": "parapet:block/aviary/walnut"
   },
   "elements": [
     {
@@ -299,83 +299,6 @@
     },
     {
       "from": [
-        4.35,
-        3,
-        7.7
-      ],
-      "to": [
-        7.9,
-        5.05,
-        11.05
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            2,
-            4,
-            5.55,
-            6.05
-          ],
-          "texture": "#berry"
-        },
-        "east": {
-          "uv": [
-            3,
-            4,
-            6.35,
-            6.05
-          ],
-          "texture": "#berry"
-        },
-        "south": {
-          "uv": [
-            2,
-            4,
-            5.55,
-            6.05
-          ],
-          "texture": "#berry"
-        },
-        "west": {
-          "uv": [
-            3,
-            4,
-            6.35,
-            6.05
-          ],
-          "texture": "#berry"
-        },
-        "up": {
-          "uv": [
-            9,
-            8,
-            12.55,
-            11.35
-          ],
-          "texture": "#berry"
-        },
-        "down": {
-          "uv": [
-            9,
-            8,
-            12.55,
-            11.35
-          ],
-          "texture": "#berry"
-        }
-      },
-      "rotation": {
-        "origin": [
-          8,
-          14.5,
-          8
-        ],
-        "axis": "x",
-        "angle": 22.5
-      }
-    },
-    {
-      "from": [
         5.58,
         5.05,
         8.68
@@ -607,69 +530,377 @@
     },
     {
       "from": [
-        4.8,
-        6.1,
-        7.7
+        4.15,
+        3.02,
+        8.45
       ],
       "to": [
-        8.35,
         8.15,
-        11.05
+        5.05,
+        10.94
       ],
       "faces": {
         "north": {
           "uv": [
+            3,
+            0,
             7,
-            1,
-            10.55,
-            3.05
+            2.03
           ],
-          "texture": "#honey_oak"
+          "texture": "#toy_rosewood"
         },
         "east": {
           "uv": [
-            7,
-            0,
-            10.35,
-            2.05
+            9,
+            10,
+            11.49,
+            12.03
           ],
-          "texture": "#honey_oak"
+          "texture": "#toy_rosewood"
+        },
+        "south": {
+          "uv": [
+            6,
+            5,
+            10,
+            7.03
+          ],
+          "texture": "#toy_rosewood"
+        },
+        "west": {
+          "uv": [
+            12,
+            1,
+            14.49,
+            3.03
+          ],
+          "texture": "#toy_rosewood"
+        },
+        "up": {
+          "uv": [
+            2,
+            6,
+            6,
+            8.49
+          ],
+          "texture": "#toy_rosewood"
+        },
+        "down": {
+          "uv": [
+            5,
+            11,
+            9,
+            13.49
+          ],
+          "texture": "#toy_rosewood"
+        }
+      },
+      "rotation": {
+        "origin": [
+          8,
+          14.5,
+          8
+        ],
+        "axis": "x",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        4.15,
+        3.02,
+        7.59
+      ],
+      "to": [
+        6.72,
+        5.05,
+        8.45
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            6,
+            3.57,
+            8.03
+          ],
+          "texture": "#toy_rosewood"
+        },
+        "east": {
+          "uv": [
+            1,
+            2,
+            1.86,
+            4.03
+          ],
+          "texture": "#toy_rosewood"
+        },
+        "south": {
+          "uv": [
+            4,
+            11,
+            6.57,
+            13.03
+          ],
+          "texture": "#toy_rosewood"
+        },
+        "west": {
+          "uv": [
+            4,
+            7,
+            4.86,
+            9.03
+          ],
+          "texture": "#toy_rosewood"
+        },
+        "up": {
+          "uv": [
+            13,
+            10,
+            15.57,
+            10.86
+          ],
+          "texture": "#toy_rosewood"
+        },
+        "down": {
+          "uv": [
+            2,
+            15,
+            4.57,
+            15.86
+          ],
+          "texture": "#toy_rosewood"
+        }
+      },
+      "rotation": {
+        "origin": [
+          8,
+          14.5,
+          8
+        ],
+        "axis": "x",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        3.95,
+        6.27,
+        7.94
+      ],
+      "to": [
+        8.55,
+        8.15,
+        10.85
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            3,
+            13.6,
+            4.88
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "east": {
+          "uv": [
+            9,
+            13,
+            11.91,
+            14.88
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            4.6,
+            9.88
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "west": {
+          "uv": [
+            12,
+            3,
+            14.91,
+            4.88
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "up": {
+          "uv": [
+            9,
+            2,
+            13.6,
+            4.91
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "down": {
+          "uv": [
+            0,
+            7,
+            4.6,
+            9.91
+          ],
+          "texture": "#toy_honeywood"
+        }
+      },
+      "rotation": {
+        "origin": [
+          8,
+          14.5,
+          8
+        ],
+        "axis": "x",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        4.7,
+        6.27,
+        7.15
+      ],
+      "to": [
+        7.8,
+        8.15,
+        7.94
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            14,
+            7.1,
+            15.88
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "east": {
+          "uv": [
+            3,
+            9,
+            3.79,
+            10.88
+          ],
+          "texture": "#toy_honeywood"
         },
         "south": {
           "uv": [
             7,
-            1,
-            10.55,
-            3.05
+            4,
+            10.1,
+            5.88
           ],
-          "texture": "#honey_oak"
+          "texture": "#toy_honeywood"
         },
         "west": {
           "uv": [
-            7,
-            0,
-            10.35,
-            2.05
+            6,
+            14,
+            6.79,
+            15.88
           ],
-          "texture": "#honey_oak"
+          "texture": "#toy_honeywood"
         },
         "up": {
           "uv": [
-            7,
-            12,
-            10.55,
-            15.35
+            3,
+            3,
+            6.1,
+            3.79
           ],
-          "texture": "#honey_oak"
+          "texture": "#toy_honeywood"
         },
         "down": {
           "uv": [
-            7,
-            12,
-            10.55,
-            15.35
+            6,
+            8,
+            9.1,
+            8.79
           ],
-          "texture": "#honey_oak"
+          "texture": "#toy_honeywood"
+        }
+      },
+      "rotation": {
+        "origin": [
+          8,
+          14.5,
+          8
+        ],
+        "axis": "x",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        4.7,
+        6.27,
+        10.85
+      ],
+      "to": [
+        7.8,
+        8.15,
+        11.62
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            12,
+            4.1,
+            13.88
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "east": {
+          "uv": [
+            1,
+            7,
+            1.77,
+            8.88
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "south": {
+          "uv": [
+            4,
+            2,
+            7.1,
+            3.88
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "west": {
+          "uv": [
+            4,
+            12,
+            4.77,
+            13.88
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "up": {
+          "uv": [
+            0,
+            10,
+            3.1,
+            10.77
+          ],
+          "texture": "#toy_honeywood"
+        },
+        "down": {
+          "uv": [
+            3,
+            15,
+            6.1,
+            15.77
+          ],
+          "texture": "#toy_honeywood"
         }
       },
       "rotation": {
@@ -685,68 +916,376 @@
     {
       "from": [
         4.45,
-        9.3,
-        7.6
+        9.4,
+        7.61
       ],
       "to": [
-        8,
+        7.73,
         11.35,
-        10.95
+        10.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11,
+            1,
+            14.28,
+            2.95
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "east": {
+          "uv": [
+            4,
+            11,
+            7.09,
+            12.95
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "south": {
+          "uv": [
+            1,
+            6,
+            4.28,
+            7.95
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "west": {
+          "uv": [
+            7,
+            1,
+            10.09,
+            2.95
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "up": {
+          "uv": [
+            10,
+            6,
+            13.28,
+            9.09
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "down": {
+          "uv": [
+            0,
+            11,
+            3.28,
+            14.09
+          ],
+          "texture": "#toy_tealwood"
+        }
+      },
+      "rotation": {
+        "origin": [
+          8,
+          14.5,
+          8
+        ],
+        "axis": "x",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        3.76,
+        9.79,
+        8.03
+      ],
+      "to": [
+        4.45,
+        10.98,
+        10.32
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            3,
+            8.69,
+            4.19
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "east": {
+          "uv": [
+            10,
+            13,
+            12.29,
+            14.19
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "south": {
+          "uv": [
+            11,
+            8,
+            11.69,
+            9.19
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "west": {
+          "uv": [
+            13,
+            3,
+            15.29,
+            4.19
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "up": {
+          "uv": [
+            4,
+            2,
+            4.69,
+            4.29
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "down": {
+          "uv": [
+            7,
+            7,
+            7.69,
+            9.29
+          ],
+          "texture": "#toy_tealwood"
+        }
+      },
+      "rotation": {
+        "origin": [
+          8,
+          14.5,
+          8
+        ],
+        "axis": "x",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        7.73,
+        9.79,
+        8.03
+      ],
+      "to": [
+        8.42,
+        10.98,
+        10.32
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            1,
+            0.69,
+            2.19
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "east": {
+          "uv": [
+            8,
+            11,
+            10.29,
+            12.19
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "south": {
+          "uv": [
+            3,
+            6,
+            3.69,
+            7.19
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "west": {
+          "uv": [
+            11,
+            1,
+            13.29,
+            2.19
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "up": {
+          "uv": [
+            12,
+            10,
+            12.69,
+            12.29
+          ],
+          "texture": "#toy_tealwood"
+        },
+        "down": {
+          "uv": [
+            15,
+            1,
+            15.69,
+            3.29
+          ],
+          "texture": "#toy_tealwood"
+        }
+      },
+      "rotation": {
+        "origin": [
+          8,
+          14.5,
+          8
+        ],
+        "axis": "x",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        5.43,
+        1.52,
+        8.86
+      ],
+      "to": [
+        5.95,
+        2.45,
+        9.38
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            12,
+            6.52,
+            12.93
+          ],
+          "texture": "#twine"
+        },
+        "east": {
+          "uv": [
+            12,
+            6,
+            12.52,
+            6.93
+          ],
+          "texture": "#twine"
+        },
+        "south": {
+          "uv": [
+            9,
+            1,
+            9.52,
+            1.93
+          ],
+          "texture": "#twine"
+        },
+        "west": {
+          "uv": [
+            15,
+            11,
+            15.52,
+            11.93
+          ],
+          "texture": "#twine"
+        },
+        "up": {
+          "uv": [
+            2,
+            0,
+            2.52,
+            0.52
+          ],
+          "texture": "#twine"
+        },
+        "down": {
+          "uv": [
+            5,
+            5,
+            5.52,
+            5.52
+          ],
+          "texture": "#twine"
+        }
+      },
+      "rotation": {
+        "origin": [
+          8,
+          14.5,
+          8
+        ],
+        "axis": "x",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        6.1,
+        1.67,
+        9.29
+      ],
+      "to": [
+        6.6,
+        2.45,
+        9.9
       ],
       "faces": {
         "north": {
           "uv": [
             4,
-            3,
-            7.55,
-            5.05
+            2,
+            4.5,
+            2.78
           ],
-          "texture": "#rope_bead"
+          "texture": "#twine"
         },
         "east": {
           "uv": [
+            10,
             12,
-            1,
-            15.35,
-            3.05
+            10.61,
+            12.78
           ],
-          "texture": "#rope_bead"
+          "texture": "#twine"
         },
         "south": {
           "uv": [
-            4,
-            3,
-            7.55,
-            5.05
+            7,
+            7,
+            7.5,
+            7.78
           ],
-          "texture": "#rope_bead"
+          "texture": "#twine"
         },
         "west": {
           "uv": [
-            12,
+            13,
             1,
-            15.35,
-            3.05
+            13.61,
+            1.78
           ],
-          "texture": "#rope_bead"
+          "texture": "#twine"
         },
         "up": {
           "uv": [
-            7,
+            0,
             6,
-            10.55,
-            9.35
+            0.5,
+            6.61
           ],
-          "texture": "#rope_bead"
+          "texture": "#twine"
         },
         "down": {
           "uv": [
-            7,
-            6,
-            10.55,
-            9.35
+            3,
+            11,
+            3.5,
+            11.61
           ],
-          "texture": "#rope_bead"
+          "texture": "#twine"
         }
       },
       "rotation": {

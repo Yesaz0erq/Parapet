@@ -1,6 +1,8 @@
 package dev.parapet;
 
+import dev.parapet.block.BirdFeedPileBlock;
 import dev.parapet.block.ParrotBathBlock;
+import dev.parapet.block.ParrotWaterBowlBlock;
 import dev.parapet.block.ParrotCageBlock;
 import dev.parapet.block.ParrotPlayStandBlock;
 import dev.parapet.block.LargeAviaryFixtureBlock;
@@ -11,6 +13,8 @@ import dev.parapet.cage.CageRoost;
 import dev.parapet.cage.CageWorkbenchBlock;
 import dev.parapet.cage.CageWorkbenchMenu;
 import dev.parapet.cage.ParrotCageItem;
+import dev.parapet.item.BirdFeedBagItem;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import net.minecraft.core.Registry;
@@ -20,10 +24,12 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.PushReaction;
 
 public final class ParapetFurniture {
     public static final ParrotCageBlock PARROT_CAGE = cage("parrot_cage", ParrotCageBlock.Size.STANDARD);
@@ -34,6 +40,7 @@ public final class ParapetFurniture {
     public static final CageWorkbenchBlock CAGE_WORKBENCH = block("cage_workbench", CageWorkbenchBlock::new, SoundType.WOOD);
     public static final ParrotPlayStandBlock PARROT_PLAY_STAND = block("parrot_play_stand", ParrotPlayStandBlock::new, SoundType.WOOD);
     public static final ParrotBathBlock PARROT_BATH = block("parrot_bath", ParrotBathBlock::new, SoundType.DECORATED_POT);
+    public static final ParrotWaterBowlBlock WATER_BOWL = block("water_bowl", ParrotWaterBowlBlock::new, SoundType.DECORATED_POT);
     public static final LargeAviaryFixtureBlock LARGE_PARROT_PLAY_STAND = block("large_parrot_play_stand",
         p -> new LargeAviaryFixtureBlock(LargeAviaryFixtureBlock.Kind.STAND, p), SoundType.WOOD);
     public static final LargeAviaryFixtureBlock LARGE_PARROT_BATH = block("large_parrot_bath",
@@ -41,10 +48,22 @@ public final class ParapetFurniture {
     public static final Item FORAGING_BALL = toy("foraging_ball", ParrotToyBlock.Kind.BALL);
     public static final Item ROPE_SWING = toy("rope_swing", ParrotToyBlock.Kind.SWING);
     public static final Item CHEW_BLOCKS = toy("chew_blocks", ParrotToyBlock.Kind.CHEW);
+    public static final Item BEAK_RUBBING_PERCH = item("beak_rubbing_perch");
+    public static final Item MINERAL_CHEW_CHARM = item("mineral_chew_charm");
+    public static final Item DOUBLE_RING_SWING = item("double_ring_swing");
+    public static final Item LARGE_CHEW_MOBILE = item("large_chew_mobile");
     public static final Item CAGE_GARLAND = item("cage_garland");
     public static final Item HANGING_BELL = item("hanging_bell");
-    public static final Item BIRD_FEED = item("bird_feed");
-    public static final Item PREMIUM_BIRD_FEED = item("premium_bird_feed");
+    public static final Item CAGE_BRUSH = item("cage_brush", new Item.Properties().durability(64));
+    public static final List<Item> BIRD_GIFTS = List.of(
+        item("loofah_fiber"), item("pine_cone"), item("straw_bundle"),
+        item("vine_ring"), item("bamboo_beads"), item("paper_rosette"));
+    public static final BirdFeedPileBlock BIRD_FEED_PILE = feedPile("bird_feed_pile");
+    public static final BirdFeedPileBlock PREMIUM_BIRD_FEED_PILE = feedPile("premium_bird_feed_pile");
+    public static final Item BIRD_FEED = looseFeed("bird_feed", BIRD_FEED_PILE);
+    public static final Item PREMIUM_BIRD_FEED = looseFeed("premium_bird_feed", PREMIUM_BIRD_FEED_PILE);
+    public static final Item BIRD_FEED_BAG = feedBag("bird_feed_bag");
+    public static final Item PREMIUM_BIRD_FEED_BAG = feedBag("premium_bird_feed_bag");
 
     public static final BlockEntityType<CageFittingsBlockEntity> CAGE_FITTINGS = Registry.register(
         BuiltInRegistries.BLOCK_ENTITY_TYPE, Parapet.id("cage_fittings"), new BlockEntityType<>(CageFittingsBlockEntity::new,
@@ -73,8 +92,42 @@ public final class ParapetFurniture {
     }
 
     private static Item item(String name) {
+        return item(name, new Item.Properties());
+    }
+
+    private static Item item(String name, Item.Properties properties) {
         var key = ResourceKey.create(Registries.ITEM, Parapet.id(name));
-        return Registry.register(BuiltInRegistries.ITEM, key, new Item(new Item.Properties().setId(key)));
+        return Registry.register(BuiltInRegistries.ITEM, key, new Item(properties.setId(key)));
+    }
+
+    private static BirdFeedPileBlock feedPile(String name) {
+        var key = ResourceKey.create(Registries.BLOCK, Parapet.id(name));
+        return Registry.register(BuiltInRegistries.BLOCK, key, new BirdFeedPileBlock(BlockBehaviour.Properties.of()
+            .setId(key).noCollision().instabreak().sound(SoundType.LEAF_LITTER).pushReaction(PushReaction.POPPED)));
+    }
+
+    private static Item looseFeed(String name, BirdFeedPileBlock pile) {
+        var key = ResourceKey.create(Registries.ITEM, Parapet.id(name));
+        var item = new BlockItem(pile, new Item.Properties().setId(key).useItemDescriptionPrefix());
+        item.registerBlocks(Item.BY_BLOCK, item);
+        return Registry.register(BuiltInRegistries.ITEM, key, item);
+    }
+
+    private static Item feedBag(String name) {
+        var key = ResourceKey.create(Registries.ITEM, Parapet.id(name));
+        return Registry.register(BuiltInRegistries.ITEM, key, new BirdFeedBagItem(new Item.Properties().setId(key)));
+    }
+
+    public static boolean isLooseFeed(ItemStack stack) {
+        return stack.is(BIRD_FEED) || stack.is(PREMIUM_BIRD_FEED);
+    }
+
+    public static boolean isBirdFeed(ItemStack stack) {
+        return isLooseFeed(stack) || stack.getItem() instanceof BirdFeedBagItem;
+    }
+
+    public static boolean isPremiumFeed(ItemStack stack) {
+        return stack.is(PREMIUM_BIRD_FEED) || stack.is(PREMIUM_BIRD_FEED_BAG);
     }
 
     private static Item toy(String name, ParrotToyBlock.Kind kind) {
@@ -90,6 +143,8 @@ public final class ParapetFurniture {
     static void addCreativeEntries(CreativeModeTab.Output output) {
         output.accept(BIRD_FEED);
         output.accept(PREMIUM_BIRD_FEED);
+        output.accept(BIRD_FEED_BAG);
+        output.accept(PREMIUM_BIRD_FEED_BAG);
         output.accept(CAGE_WORKBENCH);
         output.accept(PARROT_CAGE);
         output.accept(LARGE_PARROT_CAGE);
@@ -100,10 +155,17 @@ public final class ParapetFurniture {
         output.accept(LARGE_PARROT_PLAY_STAND);
         output.accept(PARROT_BATH);
         output.accept(LARGE_PARROT_BATH);
+        output.accept(WATER_BOWL);
         output.accept(FORAGING_BALL);
         output.accept(ROPE_SWING);
         output.accept(CHEW_BLOCKS);
+        output.accept(BEAK_RUBBING_PERCH);
+        output.accept(MINERAL_CHEW_CHARM);
+        output.accept(DOUBLE_RING_SWING);
+        output.accept(LARGE_CHEW_MOBILE);
         output.accept(CAGE_GARLAND);
         output.accept(HANGING_BELL);
+        output.accept(CAGE_BRUSH);
+        BIRD_GIFTS.forEach(output::accept);
     }
 }

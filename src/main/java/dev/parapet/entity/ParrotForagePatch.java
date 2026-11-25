@@ -1,16 +1,34 @@
 package dev.parapet.entity;
 
+import dev.parapet.block.BirdFeedPileBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-/** A living plant and a spot from which a grounded bird can reach it. */
-record ParrotForagePatch(BlockPos plant, Vec3 feet, boolean nectar) {
+/** A feeding block and a spot from which a grounded bird can reach it. */
+record ParrotForagePatch(BlockPos pos, Vec3 feet, boolean nectar, BirdFeedPileBlock feedPile) {
+    static ParrotForagePatch nearbyFeed(ServerLevel level, PetParrotEntity bird) {
+        for (BlockPos pos : BlockPos.withinManhattan(bird.blockPosition(), 4)) {
+            if (pos.getY() != bird.blockPosition().getY() || !level.hasChunkAt(pos)
+                || !(level.getBlockState(pos).getBlock() instanceof BirdFeedPileBlock pile)) continue;
+            Vec3 center = Vec3.atBottomCenterOf(pos);
+            if (level.noCollision(bird, bird.getBoundingBox().move(center.subtract(bird.position())).move(0, 0.005, 0))
+                && level.clip(new ClipContext(bird.getEyePosition(), center.add(0, 0.12, 0),
+                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, bird)).getType() == HitResult.Type.MISS) {
+                return new ParrotForagePatch(pos.immutable(), center, false, pile);
+            }
+        }
+        return null;
+    }
+
     static ParrotForagePatch nearby(ServerLevel level, PetParrotEntity bird) {
         boolean nectar = bird instanceof CompanionParrotEntity companion && companion.getSpecies().eatsFruit();
         if (!nectar && !(bird instanceof BudgerigarEntity)) return null;
@@ -26,7 +44,7 @@ record ParrotForagePatch(BlockPos plant, Vec3 feet, boolean nectar) {
             BlockPos support = BlockPos.containing(feet).below();
             if (level.hasChunkAt(support) && level.getBlockState(support).isFaceSturdy(level, support, Direction.UP)
                 && level.noCollision(bird, bird.getBoundingBox().move(feet.subtract(bird.position())).move(0, 0.005, 0))) {
-                return new ParrotForagePatch(pos.immutable(), feet, nectar);
+                return new ParrotForagePatch(pos.immutable(), feet, nectar, null);
             }
         }
         return null;
@@ -38,14 +56,18 @@ record ParrotForagePatch(BlockPos plant, Vec3 feet, boolean nectar) {
     }
 
     boolean available(ServerLevel level) {
-        return level.hasChunkAt(plant) && matches(level.getBlockState(plant), nectar)
-            && !ParrotNightRoostGoal.isRoostTime(level);
+        if (!level.hasChunkAt(pos)) return false;
+        if (feedPile != null) return level.getGameRules().get(GameRules.MOB_GRIEFING) && level.getBlockState(pos).is(feedPile);
+        return matches(level.getBlockState(pos), nectar) && !ParrotNightRoostGoal.isRoostTime(level);
     }
 
-    void finish(ServerLevel level) {
+    boolean finish(ServerLevel level) {
+        if (!available(level)) return false;
+        if (feedPile != null) return feedPile.eatOne(level, pos);
         if (nectar) {
-            level.sendParticles(ParticleTypes.FALLING_NECTAR, plant.getX() + 0.5, plant.getY() + 0.6,
-                plant.getZ() + 0.5, 2, 0.09, 0.04, 0.09, 0.0);
+            level.sendParticles(ParticleTypes.FALLING_NECTAR, pos.getX() + 0.5, pos.getY() + 0.6,
+                pos.getZ() + 0.5, 2, 0.09, 0.04, 0.09, 0.0);
         }
+        return true;
     }
 }

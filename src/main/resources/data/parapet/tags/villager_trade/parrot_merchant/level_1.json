@@ -5,6 +5,10 @@
     "parapet:parrot_merchant/1/sell_bird_feed",
     "parapet:parrot_merchant/1/sell_budgerigar_hatching_egg",
     "parapet:parrot_merchant/1/sell_lovebird_hatching_egg",
-    "parapet:parrot_merchant/1/sell_bourkes_parrot_hatching_egg"
+    "parapet:parrot_merchant/1/sell_bourkes_parrot_hatching_egg",
+    "parapet:parrot_merchant/1/sell_straw_bundle",
+    "parapet:parrot_merchant/1/sell_cage_brush",
+    "parapet:parrot_merchant/1/sell_pine_cone",
+    "parapet:parrot_merchant/1/sell_beak_rubbing_perch"
   ]
 }

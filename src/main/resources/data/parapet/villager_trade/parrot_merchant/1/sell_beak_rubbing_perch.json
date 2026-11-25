@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:emerald",
+    "count": 3
+  },
+  "gives": {
+    "id": "parapet:beak_rubbing_perch"
+  },
+  "xp": 2,
+  "max_uses": 6,
+  "reputation_discount": 0.05
+}

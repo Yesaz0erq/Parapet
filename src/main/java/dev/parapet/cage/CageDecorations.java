@@ -16,8 +16,7 @@ public final class CageDecorations {
     private CageDecorations() {}
 
     public static boolean isFitting(ItemStack stack) {
-        return stack.is(ParapetFurniture.FORAGING_BALL) || stack.is(ParapetFurniture.ROPE_SWING)
-            || stack.is(ParapetFurniture.CHEW_BLOCKS) || stack.is(ParapetFurniture.CAGE_GARLAND)
+        return CageToy.forItem(stack).isPresent() || stack.is(ParapetFurniture.CAGE_GARLAND)
             || stack.is(ParapetFurniture.HANGING_BELL);
     }
 

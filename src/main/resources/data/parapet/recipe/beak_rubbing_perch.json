@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "#minecraft:logs",
+    "minecraft:stick",
+    "minecraft:string"
+  ],
+  "result": {
+    "id": "parapet:beak_rubbing_perch",
+    "count": 1
+  }
+}

@@ -2,10 +2,14 @@ package dev.parapet.block;
 
 import dev.parapet.ParapetFurniture;
 import dev.parapet.cage.CageDecorations;
+import dev.parapet.cage.CageLayout;
 import dev.parapet.cage.CageFittingsBlockEntity;
 import dev.parapet.cage.CageBirdCargo;
 import dev.parapet.cage.CageRoost;
+import dev.parapet.cage.CageSupplies;
+import dev.parapet.cage.CageToy;
 import dev.parapet.entity.ParrotEcology;
+import dev.parapet.entity.PetParrotEntity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -24,10 +29,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.BlockGetter;
@@ -54,6 +61,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -162,6 +170,13 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
             if (midZ + 1 > 0 && midZ - 1 < 16) {
                 shell = Shapes.or(shell, box(0, top - 1, Math.max(0, midZ - 1), 16, top, Math.min(16, midZ + 1)));
             }
+            double x = CageLayout.feedingBranchX(size) - part.x;
+            double z = size.depth * 0.5 - part.z;
+            double span = CageLayout.feedingBranchSpan(size);
+            double thickness = CageLayout.feedingBranchThickness(size);
+            VoxelShape branch = Shapes.box(x - thickness / 2, size.perchHeight - thickness, z - span,
+                x + thickness / 2, size.perchHeight, z + span);
+            shell = Shapes.or(shell, Shapes.joinUnoptimized(branch, Shapes.block(), BooleanOp.AND));
         }
         return shell.optimize();
     }
@@ -210,8 +225,7 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
     }
 
     public Vec3 perch(BlockPos anchor, Direction facing) {
-        return Vec3.atBottomCenterOf(anchor).relative(facing.getClockWise(), 0.64 * size.width - 0.5)
-            .relative(facing.getOpposite(), size.depth * 0.5 - 0.5).add(0, size.perchHeight, 0);
+        return CageLayout.toWorld(anchor, facing, CageLayout.perch(size));
     }
 
     public boolean loaded(Level level, BlockPos anchor, Direction facing) {
@@ -343,7 +357,7 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
     public void playerDestroy(ServerLevel level, ServerPlayer player, BlockPos pos, BlockState state, BlockEntity blockEntity, ItemStack tool) {
         var resident = CageRoost.takePackingCandidate(level, player, pos);
         if (resident != null && level.getGameRules().get(GameRules.BLOCK_DROPS)
-            && CageBirdCargo.dropFromCage(level, pos, CageDecorations.pack(new ItemStack(this), contents(state, blockEntity)), resident, player)) {
+            && CageBirdCargo.dropFromCage(level, pos, CageDecorations.pack(shell(blockEntity), contents(state, blockEntity)), resident, player)) {
             player.awardStat(Stats.BLOCK_MINED.get(this));
             player.causeFoodExhaustion(0.005F);
             return;
@@ -356,6 +370,12 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
         return CageDecorations.contents(stored, state.getValue(GARLAND), state.getValue(BELL));
     }
 
+    private ItemStack shell(BlockEntity member) {
+        ItemStack stack = new ItemStack(this);
+        if (member instanceof CageFittingsBlockEntity base) base.copyTrayTo(stack);
+        return stack;
+    }
+
     @Override
     protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
         Float radius = params.getOptionalParameter(LootContextParams.EXPLOSION_RADIUS);
@@ -365,14 +385,15 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
             member = params.getLevel().getBlockEntity(anchor(member.getBlockPos(), state));
         }
         List<ItemStack> drops = new ArrayList<>();
-        drops.add(new ItemStack(this));
+        drops.add(shell(member));
         drops.addAll(contents(state, member));
         return drops;
     }
 
     @Override
     protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
-        return CageDecorations.pack(new ItemStack(this), contents(state, level.getBlockEntity(anchor(pos, state))));
+        var base = level.getBlockEntity(anchor(pos, state));
+        return CageDecorations.pack(includeData ? shell(base) : new ItemStack(this), contents(state, base));
     }
 
     private void change(Level level, BlockPos root, Direction facing, BooleanProperty property, boolean value) {
@@ -386,7 +407,17 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                           InteractionHand hand, BlockHitResult hit) {
-        if (!CageDecorations.isFitting(stack)) {
+        boolean brush = stack.is(ParapetFurniture.CAGE_BRUSH);
+        boolean shears = stack.is(Items.SHEARS);
+        boolean gift = ParapetFurniture.BIRD_GIFTS.contains(stack.getItem());
+        boolean supply = CageSupplies.accepts(stack);
+        if (!brush && !shears && !gift && !supply && !CageDecorations.isFitting(stack)) {
+            ItemStack offhand = player.getOffhandItem();
+            if (stack.isEmpty() && hand == InteractionHand.MAIN_HAND
+                && (offhand.is(ParapetFurniture.CAGE_BRUSH) || offhand.is(Items.SHEARS) || ParapetFurniture.BIRD_GIFTS.contains(offhand.getItem())
+                    || CageSupplies.accepts(offhand) || CageDecorations.isFitting(offhand))) {
+                return InteractionResult.PASS;
+            }
             return stack.isEmpty() ? InteractionResult.TRY_WITH_EMPTY_HAND : InteractionResult.PASS;
         }
         if (!(level instanceof ServerLevel server)) return InteractionResult.SUCCESS;
@@ -395,8 +426,47 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
         if (!player.mayBuild() || !level.mayInteract(player, pos) || !level.mayInteract(player, root)
             || !loaded(level, root, facing) || !complete(level, root, facing)
             || !(level.getBlockEntity(root) instanceof CageFittingsBlockEntity base)) return InteractionResult.FAIL;
+        if (brush || gift || supply) {
+            var resident = CageRoost.occupantAt(server, root);
+            if (supply) CageSupplies.interact(server, base, contents(state, base), resident, player, hand);
+            else if (brush) cleanCage(server, player, hand, hit, base, resident);
+            else if (resident != null) resident.acceptGift(server, player, hand);
+            else player.sendOverlayMessage(Component.translatable("message.parapet.cage.gift_empty"));
+            return InteractionResult.SUCCESS;
+        }
         List<ItemStack> fittings = contents(state, base);
-        if (fittings.stream().anyMatch(item -> item.is(stack.getItem()))) {
+        var toy = CageToy.forItem(stack);
+        if (shears || toy.isPresent()) {
+            var resident = CageRoost.occupantAt(server, root);
+            if (resident != null && !resident.isOwnedBy(player)) {
+                player.sendOverlayMessage(Component.translatable("message.parapet.cage.toy_owner_only"));
+                return InteractionResult.SUCCESS;
+            }
+            if (shears) {
+                ItemStack removed = CageToy.takeForRemoval(size, fittings);
+                if (removed.isEmpty()) {
+                    player.sendOverlayMessage(Component.translatable("message.parapet.cage.toy_none"));
+                    return InteractionResult.SUCCESS;
+                }
+                var name = removed.getHoverName();
+                base.setFittings(ItemContainerContents.fromItems(fittings));
+                player.getInventory().placeItemBackInInventory(removed, Prediction.SERVER_ONLY);
+                player.sendOverlayMessage(Component.translatable("message.parapet.cage.toy_removed", name));
+                server.playSound(null, root, SoundEvents.SHEARS_SNIP, SoundSource.BLOCKS, 0.55F, 1.1F);
+                server.gameEvent(player, GameEvent.BLOCK_CHANGE, root);
+                return InteractionResult.SUCCESS;
+            }
+            Component rejection = switch (toy.orElseThrow().installationIn(size, fittings)) {
+                case ALREADY_INSTALLED -> Component.translatable("message.parapet.cage.already_installed", stack.getHoverName());
+                case UNSUPPORTED -> Component.translatable("message.parapet.cage.toy_tier", stack.getHoverName(), toy.get().minimumCageName());
+                case FULL -> Component.translatable("message.parapet.cage.toy_full", CageToy.installedCount(fittings), CageToy.capacity(size));
+                case ALLOWED -> null;
+            };
+            if (rejection != null) {
+                player.sendOverlayMessage(rejection);
+                return InteractionResult.SUCCESS;
+            }
+        } else if (fittings.stream().anyMatch(item -> item.is(stack.getItem()))) {
             player.sendOverlayMessage(Component.translatable("message.parapet.cage.already_installed", stack.getHoverName()));
             return InteractionResult.SUCCESS;
         }
@@ -409,6 +479,34 @@ public final class ParrotCageBlock extends Block implements EntityBlock {
         server.playSound(null, root, bell ? SoundEvents.BELL_BLOCK : SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 0.45F, 1.25F);
         server.gameEvent(player, GameEvent.BLOCK_CHANGE, root);
         return InteractionResult.SUCCESS;
+    }
+
+    private void cleanCage(ServerLevel level, Player player, InteractionHand hand, BlockHitResult hit,
+                           CageFittingsBlockEntity base, PetParrotEntity resident) {
+        if (resident != null && !resident.isOwnedBy(player)) {
+            player.sendOverlayMessage(Component.translatable("message.parapet.cage.clean_owner_only"));
+            return;
+        }
+        if (!base.needsCleaning()) {
+            player.sendOverlayMessage(Component.translatable("message.parapet.cage.already_clean"));
+            return;
+        }
+        base.cleanTray();
+        player.getItemInHand(hand).hurtAndBreak(1, player, hand);
+        level.playSound(null, hit.getBlockPos(), SoundEvents.BRUSH_GENERIC, SoundSource.BLOCKS, 0.8F, 1.1F);
+        var point = hit.getLocation();
+        level.sendParticles(ParticleTypes.POOF, point.x, point.y, point.z, 6, 0.13, 0.05, 0.13, 0.01);
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, base.getBlockPos());
+        if (resident == null) {
+            player.sendOverlayMessage(Component.translatable("message.parapet.cage.cleaned"));
+            return;
+        }
+        if (resident.increaseAffinity(5)) {
+            level.sendParticles(ParticleTypes.HEART, resident.getX(), resident.getEyeY() + 0.08,
+                resident.getZ(), 2, 0.09, 0.06, 0.09, 0.01);
+        }
+        player.sendOverlayMessage(Component.translatable("message.parapet.cage.cleaned_bond",
+            resident.getDisplayName(), resident.getAffinity(), PetParrotEntity.MAX_AFFINITY));
     }
 
     public InteractionResult transferBird(BlockState state, Level level, BlockPos pos, Player player) {

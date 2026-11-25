@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "condition": {"type": "minecraft:survives_explosion"},
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "parapet:water_bowl",
+          "modifier": {
+            "type": "minecraft:copy_state",
+            "block": "parapet:water_bowl",
+            "properties": ["filled"],
+            "condition": {"type": "minecraft:match_block", "blocks": "parapet:water_bowl", "state": {"filled": "true"}}
+          }
+        }
+      ]
+    }
+  ],
+  "random_sequence": "parapet:blocks/water_bowl"
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "parapet:straw_bundle",
+    "minecraft:string",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "parapet:cage_brush",
+    "count": 1
+  }
+}
