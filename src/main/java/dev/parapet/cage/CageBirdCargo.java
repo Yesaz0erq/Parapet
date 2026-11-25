@@ -134,13 +134,12 @@ public final class CageBirdCargo {
         });
     }
 
-    /** Called only in the confirmed survival loot callback after the cage released its former occupant. */
-    public static boolean dropFromCage(ServerLevel level, BlockPos pos, ItemStack empty, PetParrotEntity bird, Player owner) {
-        if (!bird.isAlive() || bird.isPassenger() || bird.isVehicle() || !bird.isOwnedBy(owner) || bird.getCageRoost().isAssigned()) return false;
+    private static Optional<CompoundTag> serialize(ServerLevel level, ItemStack empty, PetParrotEntity bird, Player owner) {
+        if (!bird.isAlive() || bird.isPassenger() || bird.isVehicle() || !bird.isOwnedBy(owner) || bird.getCageRoost().isAssigned()) return Optional.empty();
         CargoLedger ledger = ledger(level);
-        if (ledger.records.contains(bird.getStringUUID())) return false;
+        if (ledger.records.contains(bird.getStringUUID())) return Optional.empty();
         TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, level.registryAccess());
-        if (!bird.save(output)) return false;
+        if (!bird.save(output)) return Optional.empty();
         CompoundTag entry = new CompoundTag();
         entry.store("Ticket", UUIDUtil.CODEC, UUID.randomUUID());
         entry.store("Bird", UUIDUtil.CODEC, bird.getUUID());
@@ -151,9 +150,40 @@ public final class CageBirdCargo {
         entry.putInt("EmptyStackLimit", empty.getMaxStackSize());
         entry.put("Entity", output.buildResult());
 
+        return Optional.of(entry);
+    }
+
+    private static ItemStack filled(ItemStack empty, CompoundTag entry) {
         ItemStack occupied = empty.copyWithCount(1);
         CustomData.update(DataComponents.CUSTOM_DATA, occupied, tag -> tag.put(KEY, entry.copy()));
         occupied.set(DataComponents.MAX_STACK_SIZE, 1);
+        return occupied;
+    }
+
+    public static void capture(ServerLevel level, Player owner, net.minecraft.world.InteractionHand hand,
+                               PetParrotEntity bird, ParrotCageBlock cage) {
+        ItemStack empty = owner.getItemInHand(hand);
+        if (isOccupied(empty) || !bird.isOwnedBy(owner) || bird.isLeashed() || bird.getCageRoost().isAssigned()) return;
+        if (ParrotEcology.forBird(bird).size().compareTo(cage.size().maxBirdSize) > 0) {
+            owner.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.parapet.cage.too_large"));
+            return;
+        }
+        serialize(level, empty, bird, owner).ifPresent(entry -> {
+            ItemStack occupied = filled(empty, entry);
+            ledger(level).add(entry);
+            empty.shrink(1);
+            owner.setItemInHand(hand, occupied);
+            bird.discard();
+            if (!empty.isEmpty()) owner.getInventory().placeItemBackInInventory(empty, net.minecraft.util.Prediction.SERVER_ONLY);
+        });
+    }
+
+    public static boolean dropFromCage(ServerLevel level, BlockPos pos, ItemStack empty, PetParrotEntity bird, Player owner) {
+        var saved = serialize(level, empty, bird, owner);
+        if (saved.isEmpty()) return false;
+        CompoundTag entry = saved.get();
+        CargoLedger ledger = ledger(level);
+        ItemStack occupied = filled(empty, entry);
         ItemEntity dropped = new ItemEntity(level, pos.getX() + .5, pos.getY() + .35, pos.getZ() + .5, occupied);
         dropped.setDefaultPickUpDelay();
         dropped.setTarget(owner.getUUID());

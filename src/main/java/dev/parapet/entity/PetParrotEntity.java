@@ -5,6 +5,8 @@ import dev.parapet.item.BirdFeedBagItem;
 import dev.parapet.guide.ParrotFieldGuide;
 import dev.parapet.cage.CageRoost;
 import dev.parapet.cage.CageMeal;
+import dev.parapet.cage.CageBirdCargo;
+import dev.parapet.cage.ParrotCageItem;
 import dev.parapet.block.ParrotCageBlock;
 import dev.parapet.cage.CageRoostGoal;
 import dev.parapet.interaction.ParrotInteractionMenu;
@@ -629,6 +631,10 @@ public abstract class PetParrotEntity extends TamableAnimal {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if (stack.getItem() instanceof ParrotCageItem cage) {
+            if (level() instanceof ServerLevel server) CageBirdCargo.capture(server, player, hand, this, (ParrotCageBlock) cage.getBlock());
+            return InteractionResult.SUCCESS;
+        }
         if (ParapetFurniture.BIRD_GIFTS.contains(stack.getItem())) {
             if (level() instanceof ServerLevel server) acceptGift(server, player, hand);
             return InteractionResult.SUCCESS;
@@ -675,7 +681,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
         }
         if (isOwnedBy(player) && stack.isEmpty() && hand == InteractionHand.MAIN_HAND) {
             ItemStack offhand = player.getOffhandItem();
-            if (isOfferedFood(offhand)) {
+            if (offhand.getItem() instanceof ParrotCageItem || isOfferedFood(offhand)) {
                 return InteractionResult.PASS;
             }
             if (player instanceof ServerPlayer owner) {

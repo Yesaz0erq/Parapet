@@ -72,21 +72,14 @@ def transform_cube(cube, transform):
 
 
 def open_leaf(cube, right, width):
+    # The pivot is local to the closed leaf's multipart cell. Minecraft rotates
+    # the baked vertices out past the front face without adding collision cells.
+    x, y, z = [int((a+b)/32) for a,b in zip(cube["from"], cube["to"])]
+    part, local = cell_for(cube)
     hinge_x = width - 1.92 if right else 1.92
-    sign = -1 if right else 1
-    def rotate(x,y,z):
-        return hinge_x - sign*(z-1.92), y, 1.92 + sign*(x-hinge_x)
-    result = transform_cube(cube, rotate)
-    faces = {}
-    for direction, original in cube["faces"].items():
-        face = original.copy()
-        if direction in FACINGS:
-            direction = FACINGS[(FACINGS.index(direction) + sign) % 4]
-        else:
-            face["rotation"] = (face.get("rotation", 0) + 90*sign*(1 if direction == "up" else -1)) % 360
-        faces[direction] = face
-    result["faces"] = faces
-    return result
+    local["rotation"] = {"axis": "y", "angle": -45 if right else 45,
+                         "origin": [round(hinge_x-16*x, 4), 0, round(1.92-16*z, 4)]}
+    return part, local
 
 
 def part_name(x, y, z):
@@ -197,7 +190,7 @@ def export_cage(name, groups):
             if group.startswith("door_"):
                 part, closed = cell_for(cube)
                 layers[part]["closed"].append(closed)
-                part, opened = cell_for(open_leaf(cube, group == "door_right", width))
+                part, opened = open_leaf(cube, group == "door_right", width)
                 layers[part]["open"].append(opened)
             else:
                 part, local = cell_for(cube)

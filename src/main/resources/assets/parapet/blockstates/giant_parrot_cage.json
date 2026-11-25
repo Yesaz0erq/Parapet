@@ -166,49 +166,6 @@
     },
     {
       "when": {
-        "part": "back",
-        "facing": "north",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/back_open"
-      }
-    },
-    {
-      "when": {
-        "part": "back",
-        "facing": "east",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/back_open",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "part": "back",
-        "facing": "south",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/back_open",
-        "y": 180
-      }
-    },
-    {
-      "when": {
-        "part": "back",
-        "facing": "west",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/back_open",
-        "y": 270
-      }
-    },
-    {
-      "when": {
         "part": "rear",
         "facing": "north"
       },
@@ -325,6 +282,49 @@
       },
       "apply": {
         "model": "parapet:block/aviary/giant_parrot_cage/right_closed",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "right",
+        "facing": "north",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/right_open"
+      }
+    },
+    {
+      "when": {
+        "part": "right",
+        "facing": "east",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/right_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "right",
+        "facing": "south",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/right_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "right",
+        "facing": "west",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/right_open",
         "y": 270
       }
     },
@@ -567,49 +567,6 @@
       },
       "apply": {
         "model": "parapet:block/aviary/giant_parrot_cage/back_far_right_frame",
-        "y": 270
-      }
-    },
-    {
-      "when": {
-        "part": "back_far_right",
-        "facing": "north",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/back_far_right_open"
-      }
-    },
-    {
-      "when": {
-        "part": "back_far_right",
-        "facing": "east",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/back_far_right_open",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "part": "back_far_right",
-        "facing": "south",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/back_far_right_open",
-        "y": 180
-      }
-    },
-    {
-      "when": {
-        "part": "back_far_right",
-        "facing": "west",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/back_far_right_open",
         "y": 270
       }
     },
@@ -1523,6 +1480,49 @@
       "when": {
         "part": "top_right",
         "facing": "north",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/top_right_open"
+      }
+    },
+    {
+      "when": {
+        "part": "top_right",
+        "facing": "east",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/top_right_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "top_right",
+        "facing": "south",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/top_right_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "top_right",
+        "facing": "west",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/top_right_open",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "top_right",
+        "facing": "north",
         "garland": "true"
       },
       "apply": {
@@ -1642,49 +1642,6 @@
     },
     {
       "when": {
-        "part": "top_back",
-        "facing": "north",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/top_back_open"
-      }
-    },
-    {
-      "when": {
-        "part": "top_back",
-        "facing": "east",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/top_back_open",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "part": "top_back",
-        "facing": "south",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/top_back_open",
-        "y": 180
-      }
-    },
-    {
-      "when": {
-        "part": "top_back",
-        "facing": "west",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/top_back_open",
-        "y": 270
-      }
-    },
-    {
-      "when": {
         "part": "top_back_far_right",
         "facing": "north"
       },
@@ -1719,49 +1676,6 @@
       },
       "apply": {
         "model": "parapet:block/aviary/giant_parrot_cage/top_back_far_right_frame",
-        "y": 270
-      }
-    },
-    {
-      "when": {
-        "part": "top_back_far_right",
-        "facing": "north",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/top_back_far_right_open"
-      }
-    },
-    {
-      "when": {
-        "part": "top_back_far_right",
-        "facing": "east",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/top_back_far_right_open",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "part": "top_back_far_right",
-        "facing": "south",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/top_back_far_right_open",
-        "y": 180
-      }
-    },
-    {
-      "when": {
-        "part": "top_back_far_right",
-        "facing": "west",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/top_back_far_right_open",
         "y": 270
       }
     },
@@ -1884,49 +1798,6 @@
     },
     {
       "when": {
-        "part": "upper_back",
-        "facing": "north",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/upper_back_open"
-      }
-    },
-    {
-      "when": {
-        "part": "upper_back",
-        "facing": "east",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/upper_back_open",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "part": "upper_back",
-        "facing": "south",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/upper_back_open",
-        "y": 180
-      }
-    },
-    {
-      "when": {
-        "part": "upper_back",
-        "facing": "west",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/upper_back_open",
-        "y": 270
-      }
-    },
-    {
-      "when": {
         "part": "upper_back_far_right",
         "facing": "north"
       },
@@ -1961,49 +1832,6 @@
       },
       "apply": {
         "model": "parapet:block/aviary/giant_parrot_cage/upper_back_far_right_frame",
-        "y": 270
-      }
-    },
-    {
-      "when": {
-        "part": "upper_back_far_right",
-        "facing": "north",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/upper_back_far_right_open"
-      }
-    },
-    {
-      "when": {
-        "part": "upper_back_far_right",
-        "facing": "east",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/upper_back_far_right_open",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "part": "upper_back_far_right",
-        "facing": "south",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/upper_back_far_right_open",
-        "y": 180
-      }
-    },
-    {
-      "when": {
-        "part": "upper_back_far_right",
-        "facing": "west",
-        "open": "true"
-      },
-      "apply": {
-        "model": "parapet:block/aviary/giant_parrot_cage/upper_back_far_right_open",
         "y": 270
       }
     },
@@ -2047,6 +1875,49 @@
       },
       "apply": {
         "model": "parapet:block/aviary/giant_parrot_cage/upper_right_closed",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "part": "upper_right",
+        "facing": "north",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/upper_right_open"
+      }
+    },
+    {
+      "when": {
+        "part": "upper_right",
+        "facing": "east",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/upper_right_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "part": "upper_right",
+        "facing": "south",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/upper_right_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "part": "upper_right",
+        "facing": "west",
+        "open": "true"
+      },
+      "apply": {
+        "model": "parapet:block/aviary/giant_parrot_cage/upper_right_open",
         "y": 270
       }
     },
