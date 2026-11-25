@@ -538,6 +538,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
         setActivity(trick.activity);
         ServerLevel server = owner.level();
         switch (trick) {
+            case SHOULDER -> owner.connection.send(new net.minecraft.network.protocol.game.ClientboundSetPassengersPacket(owner));
             case WHISTLE -> playSound(SoundEvents.PARROT_AMBIENT, 0.7F, 1.35F);
             case GREET -> {
                 playSound(SoundEvents.PARROT_AMBIENT, 0.6F, 1.24F);

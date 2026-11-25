@@ -73,7 +73,10 @@ public final class ParrotInteractionMenu extends AbstractContainerMenu {
             var owner = context.player();
             if (request.birdId() == -1 && owner.containerMenu == owner.inventoryMenu) {
                 for (var passenger : owner.getPassengers()) {
-                    if (passenger instanceof PetParrotEntity bird && bird.isOwnedBy(owner)) bird.stopRiding();
+                    if (passenger instanceof PetParrotEntity bird && bird.isOwnedBy(owner)) {
+                        bird.stopRiding();
+                        owner.connection.send(new net.minecraft.network.protocol.game.ClientboundSetPassengersPacket(owner));
+                    }
                 }
                 return;
             }
