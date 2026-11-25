@@ -7,6 +7,10 @@ version = project.mod_version
 
 repositories {
     exclusiveContent {
+        forRepository { maven { url = 'https://api.modrinth.com/maven' } }
+        filter { includeModule 'maven.modrinth', 'carry-on' }
+    }
+    exclusiveContent {
         forRepository {
             maven { url = 'https://maven.blamejared.com/' }
         }
@@ -29,6 +33,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    compileOnly "maven.modrinth:carry-on:9UKSKr1K"
     clientCompileOnly "mezz.jei:jei-${project.minecraft_version}-common-api:31.14.0.72"
 }
 

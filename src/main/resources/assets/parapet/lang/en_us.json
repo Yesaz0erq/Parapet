@@ -456,7 +456,7 @@
   "gui.parapet.guide.controls": "Getting started",
   "gui.parapet.guide.controls_bird": "Aim at your parrot and middle-click to interact. Use a suitable empty cage on your bird to carry it.",
   "gui.parapet.guide.housing": "Housing",
-  "gui.parapet.guide.controls_cage": "Use a carrier on an open small cage, or on a stand near an open cage. Sneak-use a cage with both hands empty to release one bird.",
+  "gui.parapet.guide.controls_cage": "Hold your bird in a carrier or with Carry On. Use an open cage with room, or a stand nearby. Sneak-use a cage with both hands empty to release one bird.",
   "message.parapet.cage.space_occupied": "An entity is in the way. Clear space for the cage.",
   "message.parapet.cage.need_open_space": "Open a cage with enough room within four blocks of the stand."
 }
