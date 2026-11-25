@@ -119,9 +119,18 @@ public abstract class PetParrotEntity extends TamableAnimal {
         moveControl = new FlyingMoveControl<>(this, 10, false);
     }
 
-    public static AttributeSupplier.Builder createAttributes() {
+    private static int speciesHealth(ParrotEcology species) {
+        int length = species.adultLengthCm().maxCm();
+        return switch (species.size()) {
+            case SMALL -> Math.clamp(length - 9, 8, 20);
+            case MEDIUM -> Math.clamp(length, 24, 44);
+            case LARGE -> Math.clamp(length, 48, 80);
+        };
+    }
+
+    public static AttributeSupplier.Builder createAttributes(ParrotEcology species) {
         return createAnimalAttributes()
-            .add(Attributes.MAX_HEALTH, 8.0)
+            .add(Attributes.MAX_HEALTH, speciesHealth(species))
             .add(Attributes.MOVEMENT_SPEED, 0.20)
             .add(Attributes.FLYING_SPEED, 0.38);
     }
@@ -213,6 +222,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
 
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource damage, float amount) {
+        if (getVehicle() instanceof Player player && isOwnedBy(player)) return false;
         if (cageRoost.isAssigned() && damage.is(DamageTypeTags.IS_EXPLOSION)) {
             return false;
         }
@@ -485,6 +495,20 @@ public abstract class PetParrotEntity extends TamableAnimal {
         setActivity(PetParrotActivity.GREET);
     }
 
+    public boolean canPerchOnShoulder() {
+        return ParrotEcology.forBird(this).size() != ParrotEcology.Size.LARGE;
+    }
+
+    @Override
+    public Vec3 getVehicleAttachmentPoint(net.minecraft.world.entity.Entity vehicle) {
+        if (vehicle instanceof Player player && isOwnedBy(player)) {
+            Vec3 shoulder = player.position().add(new Vec3(0.41, player.getEyeHeight() - 0.24, 0)
+                .yRot(-player.yBodyRot * net.minecraft.util.Mth.DEG_TO_RAD));
+            return player.getPassengerRidingPosition(this).subtract(shoulder);
+        }
+        return super.getVehicleAttachmentPoint(vehicle);
+    }
+
     public final int ownerInteractionCooldown() {
         return Math.clamp(nextInteractionTime - level().getGameTime(), 0, 80);
     }
@@ -501,6 +525,8 @@ public abstract class PetParrotEntity extends TamableAnimal {
         if (!isOwnedBy(owner) || !isAlive() || !owner.isAlive() || owner.isSpectator() || owner.level() != level()
             || distanceToSqr(owner) > 20.25 || !hasLineOfSight(owner) || getAffinity() < trick.affinity
             || ownerInteractionAvailability() != Availability.READY) return false;
+        if (trick == ParrotTrick.SHOULDER && (!canPerchOnShoulder() || !owner.getPassengers().isEmpty()
+            || !startRiding(owner, true, true))) return false;
         nextInteractionTime = level().getGameTime() + 80;
         ownerWasAway = false;
         nextOwnerGreeting = Math.max(nextOwnerGreeting, level().getGameTime() + 600L);
@@ -512,6 +538,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
         setActivity(trick.activity);
         ServerLevel server = owner.level();
         switch (trick) {
+            case WHISTLE -> playSound(SoundEvents.PARROT_AMBIENT, 0.7F, 1.35F);
             case GREET -> {
                 playSound(SoundEvents.PARROT_AMBIENT, 0.6F, 1.24F);
                 server.sendParticles(ParticleTypes.NOTE, getX(), getEyeY() + 0.1, getZ(), 1, 0.0, 0.0, 0.0, 0.0);
@@ -573,6 +600,7 @@ public abstract class PetParrotEntity extends TamableAnimal {
     @Override
     protected void addAdditionalSaveData(ValueOutput output) {
         super.addAdditionalSaveData(output);
+        output.putBoolean("SizeBasedHealth", true);
         output.putString("Plumage", getPlumageId());
         output.putInt("Affinity", getAffinity());
         output.putString("Personality", getPersonality().id());
@@ -593,6 +621,15 @@ public abstract class PetParrotEntity extends TamableAnimal {
     @Override
     protected void readAdditionalSaveData(ValueInput input) {
         super.readAdditionalSaveData(input);
+        if (!input.getBooleanOr("SizeBasedHealth", false)) {
+            var health = getAttribute(Attributes.MAX_HEALTH);
+            double speciesBase = speciesHealth(ParrotEcology.forBird(this));
+            if (health.getBaseValue() == 8 || health.getBaseValue() == speciesBase) {
+                float fraction = Math.clamp(getHealth() / 8F, 0F, 1F);
+                health.setBaseValue(speciesBase);
+                setHealth(fraction * getMaxHealth());
+            }
+        }
         input.getString("Plumage").ifPresent(this::setPlumageId);
         if (hasPlumageGenes()) {
             carriedPlumage = input.getString("CarriedPlumage").filter(colors::contains).orElse(null);

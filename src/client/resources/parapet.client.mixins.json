@@ -3,7 +3,7 @@
   "package": "dev.parapet.client.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
-    "ParrotMouseMixin"
+    "ParrotMouseMixin", "ParrotKeyboardMixin"
   ],
   "injectors": {
     "defaultRequire": 1

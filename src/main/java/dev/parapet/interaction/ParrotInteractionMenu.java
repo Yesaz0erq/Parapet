@@ -71,6 +71,12 @@ public final class ParrotInteractionMenu extends AbstractContainerMenu {
         PayloadTypeRegistry.serverboundPlay().register(Inspect.TYPE, Inspect.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(Inspect.TYPE, (request, context) -> {
             var owner = context.player();
+            if (request.birdId() == -1 && owner.containerMenu == owner.inventoryMenu) {
+                for (var passenger : owner.getPassengers()) {
+                    if (passenger instanceof PetParrotEntity bird && bird.isOwnedBy(owner)) bird.stopRiding();
+                }
+                return;
+            }
             if (owner.containerMenu == owner.inventoryMenu && owner.level().getEntity(request.birdId()) instanceof PetParrotEntity bird) open(owner, bird);
         });
         PayloadTypeRegistry.clientboundPlay().register(Profile.TYPE, Profile.CODEC);

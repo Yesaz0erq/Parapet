@@ -27,6 +27,7 @@ import net.minecraft.world.entity.EntityType;
 public final class ParapetClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        ParrotKeys.initialize();
         ClientPlayNetworking.registerGlobalReceiver(ParrotFieldGuide.Open.TYPE, (payload, context) ->
             context.client().gui.setScreen(new ParrotFieldGuideScreen(Set.copyOf(payload.species()))));
         BlockEntityRendererRegistry.register(ParapetFurniture.CAGE_FITTINGS, CageFittingsRenderer::new);

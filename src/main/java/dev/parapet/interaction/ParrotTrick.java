@@ -10,7 +10,9 @@ public enum ParrotTrick {
     TARGET(25, PetParrotActivity.TOUCH_TARGET),
     STRETCH(45, PetParrotActivity.STRETCH),
     HIGH_FIVE(65, PetParrotActivity.HIGH_FIVE),
-    TURN(85, PetParrotActivity.TURN);
+    TURN(85, PetParrotActivity.TURN),
+    WHISTLE(15, PetParrotActivity.CONTACT_CALL),
+    SHOULDER(0, PetParrotActivity.IDLE);
 
     private final String key = "gui.parapet.interaction." + name().toLowerCase(Locale.ROOT);
     public final int affinity;

@@ -407,6 +407,9 @@ public final class ParrotFieldGuideScreen extends Screen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        for (var shortcut : ParrotKeys.Guide.values()) {
+            if (shortcut.binding.matchesMouse(event)) return guideKey(shortcut.code);
+        }
         if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) return super.mouseClicked(event, doubleClick);
         if (openingProgress() < 1F) {
             openingSkipped = true;
@@ -447,25 +450,32 @@ public final class ParrotFieldGuideScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent key) {
-        int code = key.key();
+        if (key.key() == InputConstants.KEY_ESCAPE) return guideKey(key.key()) || super.keyPressed(key);
+        for (var shortcut : ParrotKeys.Guide.values()) {
+            if (shortcut.binding.matches(key)) return guideKey(shortcut.code);
+        }
+        return super.keyPressed(key);
+    }
+
+    private boolean guideKey(int code) {
         if (openingProgress() < 1F) {
             openingSkipped = true;
             if (code == InputConstants.KEY_ESCAPE) { onClose(); return true; }
             if (code == InputConstants.KEY_SPACE || code == InputConstants.KEY_RETURN || code == InputConstants.KEY_NUMPADENTER) return true;
         }
         if (code == InputConstants.KEY_ESCAPE && indexOpen) { indexOpen = false; return true; }
-        if (turnStarted != 0) return super.keyPressed(key);
+        if (turnStarted != 0) return false;
         if (code == InputConstants.KEY_ESCAPE && notesOpen) { notesOpen = false; return true; }
         switch (code) {
             case InputConstants.KEY_HOME, InputConstants.KEY_I -> index();
-            case InputConstants.KEY_F -> { if (indexOpen) toggleIndexFilter(); else return super.keyPressed(key); }
+            case InputConstants.KEY_F -> { if (indexOpen) toggleIndexFilter(); else return false; }
             case InputConstants.KEY_H -> { indexOpen = false; notesOpen = !notesOpen; }
             case InputConstants.KEY_LEFT, InputConstants.KEY_PAGEUP -> { if (indexOpen) moveIndex(-INDEX_ROWS); else turn(page - 1); }
             case InputConstants.KEY_RIGHT, InputConstants.KEY_PAGEDOWN -> { if (indexOpen) moveIndex(INDEX_ROWS); else turn(page + 1); }
             case InputConstants.KEY_UP -> { if (indexOpen) moveIndex(-1); else cycle(-1); }
             case InputConstants.KEY_DOWN -> { if (indexOpen) moveIndex(1); else cycle(1); }
             case InputConstants.KEY_RETURN, InputConstants.KEY_NUMPADENTER -> { if (indexOpen) openIndexEntry(indexFocus); else index(); }
-            default -> { return super.keyPressed(key); }
+            default -> { return false; }
         }
         return true;
     }

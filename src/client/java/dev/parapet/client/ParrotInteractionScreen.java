@@ -47,7 +47,7 @@ public final class ParrotInteractionScreen extends AbstractContainerScreen<Parro
         topPos = (height - scaled(imageHeight)) / 2;
         for (ParrotTrick trick : ParrotTrick.values()) {
             int i = trick.ordinal();
-            choices.add(addRenderableWidget(new TrickButton(trick, i % 2 == 0 ? 16 : 131, 88 + i / 2 * 23)));
+            choices.add(addRenderableWidget(new TrickButton(trick, i % 2 == 0 ? 16 : 131, 81 + i / 2 * 20)));
         }
         Component close = Component.translatable("gui.close");
         addRenderableWidget(Button.builder(Component.literal("×"), button -> onClose())
@@ -60,7 +60,11 @@ public final class ParrotInteractionScreen extends AbstractContainerScreen<Parro
 
     private void updateButtons() {
         boolean ready = menu.profile() != null && menu.availability() == ParrotInteractionMenu.Availability.READY;
-        for (TrickButton button : choices) button.active = ready && menu.affinity() >= button.trick.affinity;
+        for (TrickButton button : choices) {
+            button.visible = button.trick != ParrotTrick.SHOULDER || menu.profile() != null && minecraft.level != null
+                && minecraft.level.getEntity(menu.profile().birdId()) instanceof PetParrotEntity bird && bird.canPerchOnShoulder();
+            button.active = button.visible && ready && menu.affinity() >= button.trick.affinity;
+        }
     }
 
     @Override
@@ -163,7 +167,7 @@ public final class ParrotInteractionScreen extends AbstractContainerScreen<Parro
             gui.pose().scale(getWidth() / 109F, getHeight() / 19F);
             int spriteY = !active ? 38 : isHoveredOrFocused() ? 19 : 0;
             gui.blit(RenderPipelines.GUI_TEXTURED, BUTTONS, 0, 0, 0F, spriteY, 109, 19, 109, 57);
-            int icon = locked ? 6 : trick.ordinal();
+            int icon = locked ? 6 : switch (trick) { case WHISTLE -> 0; case SHOULDER -> 4; default -> trick.ordinal(); };
             gui.blit(RenderPipelines.GUI_TEXTURED, ICONS, 5, 3, icon * 12F, 0F, 12, 12, 84, 12);
             String label = trick.label().getString();
             String threshold = locked ? Integer.toString(trick.affinity) : "";

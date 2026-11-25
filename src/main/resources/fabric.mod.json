@@ -23,6 +23,7 @@
     "fabric-api": ">=0.167.0"
   },
   "mixins": [
+    "parapet.mixins.json",
     {
       "config": "parapet.client.mixins.json",
       "environment": "client"

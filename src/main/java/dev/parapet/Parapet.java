@@ -112,7 +112,7 @@ public final class Parapet implements ModInitializer {
         ResourceKey<EntityType<?>> key = ResourceKey.create(Registries.ENTITY_TYPE, id(name));
         EntityType<T> type = Registry.register(BuiltInRegistries.ENTITY_TYPE, key,
             FabricEntityType.Builder.createMob(factory, MobCategory.CREATURE, builder ->
-                builder.defaultAttributes(PetParrotEntity::createAttributes)
+                builder.defaultAttributes(() -> PetParrotEntity.createAttributes(ParrotEcology.forEntityId(id(name)).orElseThrow()))
                     .spawnPlacement(ParrotEcology.PERCH, Heightmap.Types.MOTION_BLOCKING, ParrotEcology::checkSpawn))
                 .sized(width, height)
                 .eyeHeight(eyeHeight)
