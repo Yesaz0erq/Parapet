@@ -165,13 +165,15 @@ final class PetParrotModel extends EntityModel<PetParrotRenderer.State> {
             case PREEN -> clips.preen.apply(actionTime, weight);
             case BATHE -> clips.bathe.apply(actionTime, weight * (1F - state.outgoingWeight));
             case DRINK -> clips.drink.apply(actionTime, weight * (1F - state.outgoingWeight));
-            case GREET, STROKE -> {
-                clips.greet.apply(actionTime, weight);
-                if (state.activity == PetParrotActivity.STROKE) {
-                    float lean = Mth.sin(Mth.PI * state.activityTicks / state.activity.durationTicks()) * weight;
-                    head.zRot += lean * 0.28F;
-                    head.xRot -= lean * 0.16F;
+            case STROKE -> {
+                clips.stroke.apply(actionTime, weight);
+                if (crest != null) {
+                    float phase = Mth.clamp(state.activityTicks / state.activity.durationTicks(), 0F, 1F);
+                    crest.xRot -= 0.22F * weight * Mth.sin(Mth.PI * phase);
                 }
+            }
+            case GREET -> {
+                clips.greet.apply(actionTime, weight);
                 if (clips.crestDisplay != null) {
                     long crestTime = actionTime * PetParrotActivity.RAISE_CREST.durationTicks()
                         / PetParrotActivity.GREET.durationTicks();

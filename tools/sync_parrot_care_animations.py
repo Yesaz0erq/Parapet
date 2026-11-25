@@ -10,7 +10,7 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 LIBRARIES = ROOT / "src/client/resources/assets/parapet/parrot_clips"
-CLIP_NAMES = ("bathe", "drink", "cage_idle", "cage_feed")
+CLIP_NAMES = ("bathe", "drink", "cage_idle", "cage_feed", "stroke")
 
 
 def compact(value):
@@ -145,6 +145,7 @@ def write_clip(path, raw, wire):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--server", default="http://localhost:3000/bb-mcp")
+    parser.add_argument("--clip", choices=CLIP_NAMES, help="Sync a single animation")
     parser.add_argument("projects", nargs="*", type=Path)
     args = parser.parse_args()
     editor = Blockbench(args.server)
@@ -152,7 +153,7 @@ def main():
     by_idle = {}
     for name in ("pet_parrots", "medium_parrots", "large_parrots"):
         clips = {c["name"]: c for c in json.loads((LIBRARIES / (name + ".json")).read_text())["clips"]}
-        by_idle[clips["idle"]["length"]] = [clips[name] for name in CLIP_NAMES]
+        by_idle[clips["idle"]["length"]] = [clips[args.clip]] if args.clip else [clips[name] for name in CLIP_NAMES]
     if len(by_idle) != 3:
         raise ValueError("Each bird library must have a distinct idle duration to identify its rig")
     paths = args.projects or sorted((ROOT / "art").rglob("*.bbmodel"))

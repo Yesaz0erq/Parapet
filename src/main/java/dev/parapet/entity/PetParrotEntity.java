@@ -516,7 +516,15 @@ public abstract class PetParrotEntity extends TamableAnimal {
                 playSound(SoundEvents.PARROT_AMBIENT, 0.6F, 1.24F);
                 server.sendParticles(ParticleTypes.NOTE, getX(), getEyeY() + 0.1, getZ(), 1, 0.0, 0.0, 0.0, 0.0);
             }
-            case STROKE -> server.sendParticles(ParticleTypes.HEART, getX(), getEyeY() + 0.12, getZ(), 3, 0.15, 0.08, 0.15, 0.01);
+            case STROKE -> {
+                float pitch = switch (ParrotEcology.forBird(this).size()) {
+                    case SMALL -> 1.45F;
+                    case MEDIUM -> 1.15F;
+                    case LARGE -> 0.88F;
+                };
+                playSound(SoundEvents.PARROT_AMBIENT, 0.32F, pitch + random.nextFloat() * 0.08F);
+                server.sendParticles(ParticleTypes.HEART, getX(), getEyeY() + 0.12, getZ(), 3, 0.15, 0.08, 0.15, 0.01);
+            }
             case TARGET -> {
                 Vec3 direction = owner.position().subtract(position()).horizontal().normalize();
                 Vec3 target = getEyePosition().add(direction.scale(getBbWidth() * 0.53));

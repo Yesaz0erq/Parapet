@@ -37,7 +37,7 @@ final class ParrotClips {
         }
     }
 
-    final KeyframeAnimation idle, forage, preen, greet, flap, glide, beg, crestDisplay;
+    final KeyframeAnimation idle, forage, preen, greet, stroke, flap, glide, beg, crestDisplay;
     final KeyframeAnimation nightRoost, ruffle, listen, contactCall, bathe;
     final KeyframeAnimation cageIdle, cageFeed, drink;
 
@@ -49,6 +49,7 @@ final class ParrotClips {
         };
         preen = size.definitions.get("preen").bake(root);
         greet = (species.equals("caique") ? SPECIES_ACTIONS.get("caique_hop") : size.definitions.get("greet")).bake(root);
+        stroke = size.definitions.get("stroke").bake(root);
         flap = size.definitions.get("flight_flap").bake(root);
         glide = size.definitions.get("glide").bake(root);
         nightRoost = size.definitions.get("night_roost").bake(root);
